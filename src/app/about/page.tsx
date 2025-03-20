@@ -1,4 +1,3 @@
-import { client } from "@/sanity/client";
 import { sanityFetch } from "@/sanity/live";
 import { defineQuery, PortableText } from "next-sanity";
 import Link from "next/link";

@@ -1,6 +1,4 @@
 import { client } from "@/sanity/client";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import PostsList from "@/components/PostsList";
 
 interface Post {

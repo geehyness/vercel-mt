@@ -7,10 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-// Import your Header and Footer components (make sure these files exist in your project)
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-
 const POST_QUERY = defineQuery(`*[
     _type == "post" &&
     yearWeek == $yearWeek
