@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/* globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your custom styles */
+body {
+  @apply min-h-screen flex flex-col;
+}
+
+
+/* Loading Animation */
+.gravity-loader {
+    @apply relative w-[200px] h-[200px];
+  }
+  
+  .gravity-orb {
+    @apply absolute top-1/2 left-1/2 w-8 h-8 rounded-full bg-white/80;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+    animation: orbitalCollapse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .orb-1 {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(60px);
+  }
+  
+  .orb-2 {
+    transform: translate(-50%, -50%) rotate(120deg) translateX(60px);
+    animation-delay: 0.2s;
+  }
+  
+  .orb-3 {
+    transform: translate(-50%, -50%) rotate(240deg) translateX(60px);
+    animation-delay: 0.4s;
+  }
+  
+  .gravity-core {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+           w-6 h-6 rounded-full bg-white/30;
+    animation: corePulse 1.5s infinite ease-in-out;
+    box-shadow: 0 0 25px rgba(255,255,255,0.2);
+  }
+  
+  .gravity-text {
+    @apply absolute top-full mt-8 text-center w-full text-white/80 text-sm;
+    animation: textGlow 2s infinite;
+  }
+  
+  @keyframes orbitalCollapse {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg) translateX(60px) scale(1);
+      opacity: 1;
+    }
+    70% {
+      transform: translate(-50%, -50%) rotate(720deg) translateX(0) scale(0.2);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(720deg) translateX(0) scale(0);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes corePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+  
+  @keyframes textGlow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+
+
+
+
+
+
+
+
