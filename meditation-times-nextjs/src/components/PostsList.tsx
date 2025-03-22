@@ -176,7 +176,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                 </Link>
                 {/* Date Published and Author */}
                 <p className="text-sm text-gray-500 mt-2">
-                  Published on: {getSundayDate(latestPost.yearWeek)} | Author: {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Unknown Author"}
+                  Published on: {getSundayDate(latestPost.yearWeek)} | Author: {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
                 </p>
               </div>
             )}
