@@ -49,9 +49,9 @@ export default async function PostPage({
     createdAt,
   } = post;
 
-  const postImageUrl = mainImage
+  /*const postImageUrl = mainImage
     ? urlFor(mainImage)?.width(550).height(310).url()
-    : null;
+    : null;*/
 
   const formattedDate = new Date(createdAt).toLocaleDateString();
 
@@ -62,7 +62,15 @@ export default async function PostPage({
           <Link href="/">← Back to Meditation Times</Link>
         </div>
         <div className="grid items-top gap-12 sm:grid-cols-2">
-          
+          {postImageUrl && (
+            <Image
+              src={postImageUrl}
+              alt={title || "Post"}
+              className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full"
+              height="310"
+              width="550"
+            />
+          )}
           <div className="flex flex-col justify-center space-y-4">
             {title && (
               <h1 className="text-4xl font-bold tracking-tighter mb-8">
