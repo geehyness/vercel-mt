@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import bcrypt from "bcryptjs";
 
 export default function SignUpPage() {
   const [name, setName] = useState("");
@@ -16,8 +15,6 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
@@ -26,7 +23,7 @@ export default function SignUpPage() {
         body: JSON.stringify({
           name,
           email,
-          password: hashedPassword,
+          password, // Send plain password; hashing will be done on the server
         }),
       });
 

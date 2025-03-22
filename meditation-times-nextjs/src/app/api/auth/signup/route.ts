@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { client } from "@/lib/sanity.client";
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs"; // Use bcryptjs instead of bcrypt
 import { z } from "zod";
 
 // Define input validation schema
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     // Create new user
     const user = await client.create({
