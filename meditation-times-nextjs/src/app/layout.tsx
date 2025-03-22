@@ -27,7 +27,7 @@ export default function RootLayout({
           <Footer />
           <Loading /> {/* Add the Loading component here */}
         </Providers>
-        <SanityLive client={sanityLiveClient} /> {/* Ensure the client prop is correctly passed */}
+        <SanityLive client={sanityLiveClient} /> {/* Pass the client prop correctly */}
       </body>
     </html>
   );

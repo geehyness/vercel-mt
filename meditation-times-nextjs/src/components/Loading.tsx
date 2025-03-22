@@ -23,28 +23,34 @@ export function Loading() {
       const targetUrl = new URL(anchor.href, location.origin);
       const currentUrl = new URL(currentUrlRef.current || "", location.origin);
 
-      if (targetUrl.pathname + targetUrl.search !== 
-          currentUrl.pathname + currentUrl.search) {
+      // Check if the target URL is different from the current URL
+      if (
+        targetUrl.pathname + targetUrl.search !==
+        currentUrl.pathname + currentUrl.search
+      ) {
         setIsLoading(true);
       }
     };
 
     const handleFormSubmit = () => setIsLoading(true);
 
+    // Add event listeners
     document.addEventListener("click", handleAnchorClick);
     document.addEventListener("submit", handleFormSubmit);
 
+    // Clean up event listeners
     return () => {
       document.removeEventListener("click", handleAnchorClick);
       document.removeEventListener("submit", handleFormSubmit);
     };
   }, []);
 
-  // Reset loading state
+  // Reset loading state when navigation is complete
   useEffect(() => {
     setIsLoading(false);
   }, [pathname, searchParams]);
 
+  // Don't render anything if not loading
   if (!isLoading) return null;
 
   return (
@@ -54,7 +60,7 @@ export function Loading() {
         <div className="gravity-orb orb-2"></div>
         <div className="gravity-orb orb-3"></div>
         <div className="gravity-core"></div>
-        </div>
+      </div>
     </div>
   );
 }
