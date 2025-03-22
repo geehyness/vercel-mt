@@ -49,9 +49,9 @@ export default async function PostPage({
     createdAt,
   } = post;
 
-  /*const postImageUrl = mainImage
+  const postImageUrl = mainImage
     ? urlFor(mainImage)?.width(550).height(310).url()
-    : null;*/
+    : null;
 
   const formattedDate = new Date(createdAt).toLocaleDateString();
 
