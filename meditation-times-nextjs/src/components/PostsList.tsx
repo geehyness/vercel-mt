@@ -82,22 +82,18 @@ export default function PostsList({ allPosts }: PostsListProps) {
                 className="block hover:underline"
               >
                 <div className="relative">
-                  {post.mainImage?.asset?.url ? (
-                    <div className="relative w-full h-48">
-                      <Image
-                        src={post.mainImage.asset.url}
-                        alt={post.title}
-                        fill
-                        className="rounded-lg object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-                      <span className="text-gray-500">No Image</span>
-                    </div>
-                  )}
-                  <div className="absolute top-2 left-2 bg-white bg-opacity-75 rounded-md p-2">
-                    <h2 className="text-lg font-semibold">
+                <div 
+  className="w-full rounded-lg flex items-center justify-center"
+  style={{ 
+    background: 'linear-gradient(to right, #333, aqua)', // Black to red gradient
+    width: '100%', 
+    height: '60px', // Reduced height
+  }}
+>
+  <span className="text-gray-500"></span>
+</div>
+                  <div className="absolute top-2 left-2  bg-opacity-75 rounded-md p-2">
+                    <h2 className="text-lg font-bold text-white">
                       {post.title}
                     </h2>
                   </div>
@@ -106,6 +102,7 @@ export default function PostsList({ allPosts }: PostsListProps) {
                   {getContentPreview(post.content)}
                 </p>
               </Link>
+              <br />
             </li>
           ))}
         </ul>
