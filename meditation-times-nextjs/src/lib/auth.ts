@@ -1,4 +1,4 @@
-import { Auth } from "@auth/core";
+import { NextAuth } from "@auth/nextjs"; // Use NextAuth instead of Auth
 import CredentialsProvider from "@auth/core/providers/credentials";
 import { client } from "@/lib/sanity.client"; // Your Sanity client
 import bcryptjs from "bcryptjs"; // For password hashing and comparison
@@ -53,3 +53,7 @@ export const authOptions = {
     },
   },
 };
+
+// Export the NextAuth handler
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
