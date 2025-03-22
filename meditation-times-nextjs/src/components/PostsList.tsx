@@ -176,7 +176,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                 </Link>
                 {/* Date Published and Author */}
                 <p className="text-sm text-gray-500 mt-2">
-                  Published on: {getSundayDate(latestPost.yearWeek)} | Author: {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
+                  {getSundayDate(latestPost.yearWeek)} | {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
                 </p>
               </div>
             )}
@@ -233,7 +233,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
               </Link>
               {/* Date Published and Author */}
               <p className="text-sm text-gray-500 mt-2">
-                Published on: {getSundayDate(post.yearWeek)} | Author:  {post.author?._ref ? getAuthorName(post.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
+                {getSundayDate(post.yearWeek)} | {post.author?._ref ? getAuthorName(post.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
               </p>
               <br />
             </li>
