@@ -18,8 +18,12 @@ export default function SignInPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/"); // Redirect to home page after sign-in
-    } catch (err: any) {
-      setError(err.message); // Display Firebase error message
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message); // Display Firebase error message
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   };
 
@@ -28,8 +32,12 @@ export default function SignInPage() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       router.push("/"); // Redirect to home page after Google sign-in
-    } catch (err: any) {
-      setError(err.message); // Display Firebase error message
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message); // Display Firebase error message
+      } else {
+        setError("An unknown error occurred.");
+      }
     }
   };
 
