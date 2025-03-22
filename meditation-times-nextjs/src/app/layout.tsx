@@ -18,8 +18,15 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
+          {/* Header */}
           <Header />
-          {children}
+
+          {/* Main Content with Padding */}
+          <div style={{ paddingTop: "var(--header-height, 60px)" }}>
+            {children}
+          </div>
+
+          {/* Footer */}
           <Footer />
         </Providers>
       </body>

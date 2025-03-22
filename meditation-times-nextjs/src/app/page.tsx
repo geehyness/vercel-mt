@@ -10,7 +10,7 @@ interface Post {
   _id: string;
   title: string;
   yearWeek: string;
-  content: ContentBlock[]; // Updated type
+  content: ContentBlock[];
   mainImage: {
     _type: 'image';
     asset: {
@@ -23,6 +23,13 @@ interface Post {
   slug: {
     current: string;
   };
+}
+
+interface YearMessage {
+  _id: string;
+  year: string;
+  message: string;
+  description?: string;
 }
 
 const POSTS_QUERY = `*[
@@ -39,6 +46,16 @@ const POSTS_QUERY = `*[
   slug
 }|order(yearWeek desc)`;
 
+const YEAR_MESSAGES_QUERY = `*[
+  _type == "yearMessage"
+  && defined(year)
+]{
+  _id,
+  year,
+  message,
+  description
+}|order(year desc)`;
+
 const options = { next: { revalidate: 30 } };
 
 export default async function IndexPage() {
@@ -46,6 +63,10 @@ export default async function IndexPage() {
     console.log('Fetching all posts for year filtering...');
     const allPosts = await client.fetch<Post[]>(POSTS_QUERY, {}, options);
     console.log('Fetched all posts:', allPosts.length);
+
+    console.log('Fetching yearly messages...');
+    const yearlyMessages = await client.fetch<YearMessage[]>(YEAR_MESSAGES_QUERY, {}, options);
+    console.log('Fetched yearly messages:', yearlyMessages.length);
 
     if (!allPosts || allPosts.length === 0) {
       return (
@@ -60,7 +81,7 @@ export default async function IndexPage() {
 
     return (
       <div className="flex flex-col min-h-screen">
-        <PostsList allPosts={allPosts} />
+        <PostsList allPosts={allPosts} yearlyMessages={yearlyMessages} />
       </div>
     );
   } catch (error) {
