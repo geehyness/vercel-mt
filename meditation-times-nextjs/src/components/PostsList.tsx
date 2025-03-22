@@ -4,6 +4,11 @@ import { useState } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 
+interface ContentBlock {
+  _type: string;
+  children?: { text: string }[];
+}
+
 interface SanityImage {
   _type: 'image';
   asset: {
@@ -17,7 +22,7 @@ interface Post {
   _id: string;
   title: string;
   yearWeek: string;
-  content: any;
+  content: ContentBlock[]; // Updated type
   mainImage: SanityImage;
   createdAt: string;
   slug: {
@@ -107,14 +112,14 @@ export default function PostsList({ allPosts }: PostsListProps) {
   );
 }
 
-function getContentPreview(content: any, maxLength: number = 150): string {
+function getContentPreview(content: ContentBlock[], maxLength: number = 150): string {
   if (!content || !Array.isArray(content)) return '';
 
   const text = content
     .map(block => {
       if (block._type === 'block' && block.children) {
         return block.children
-          .map((child: any) => child.text)
+          .map((child) => child.text)
           .join(' ');
       }
       return '';

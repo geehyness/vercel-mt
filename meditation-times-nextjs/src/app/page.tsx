@@ -1,11 +1,16 @@
 import { client } from "@/sanity/client";
 import PostsList from "@/components/PostsList";
 
+interface ContentBlock {
+  _type: string;
+  children?: { text: string }[];
+}
+
 interface Post {
   _id: string;
   title: string;
   yearWeek: string;
-  content: any;
+  content: ContentBlock[]; // Updated type
   mainImage: {
     _type: 'image';
     asset: {
@@ -39,39 +44,33 @@ const options = { next: { revalidate: 30 } };
 export default async function IndexPage() {
   try {
     console.log('Fetching all posts for year filtering...');
-    const allPosts = await client.fetch<Post>(POSTS_QUERY, {}, options);
+    const allPosts = await client.fetch<Post[]>(POSTS_QUERY, {}, options);
     console.log('Fetched all posts:', allPosts.length);
 
     if (!allPosts || allPosts.length === 0) {
       return (
         <div className="flex flex-col min-h-screen">
-          
           <main className="container mx-auto max-w-3xl p-8 flex-grow">
             <h3 className="text-4xl font-bold mb-8">Posts</h3>
             <p className="text-gray-600">No posts found.</p>
           </main>
-          
         </div>
       );
     }
 
     return (
       <div className="flex flex-col min-h-screen">
-        
         <PostsList allPosts={allPosts} />
-        
       </div>
     );
   } catch (error) {
     console.error('Error fetching posts:', error);
     return (
       <div className="flex flex-col min-h-screen">
-        
         <main className="container mx-auto max-w-3xl p-8 flex-grow">
           <h1 className="text-4xl font-bold mb-8">Error</h1>
           <p className="text-red-600">Failed to load posts. Please try again later.</p>
         </main>
-        
       </div>
     );
   }
