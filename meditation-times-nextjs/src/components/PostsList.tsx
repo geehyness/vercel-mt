@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface ContentBlock {
   _type: string;
   children?: { text: string }[];
+}
+
+interface Author {
+  _id: string;
+  name: string;
 }
 
 interface Post {
@@ -16,6 +21,9 @@ interface Post {
   createdAt: string;
   slug: {
     current: string;
+  };
+  author?: {
+    _ref: string; // Reference to the author's ID
   };
 }
 
@@ -32,6 +40,59 @@ interface PostsListProps {
 }
 
 export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListProps) {
+  const [authors, setAuthors] = useState<Author[]>([]);
+
+  // Fetch all authors from the database
+  useEffect(() => {
+    async function fetchAuthors() {
+      try {
+        const response = await fetch("/api/authors");
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setAuthors(data);
+      } catch (error) {
+        console.error("Failed to fetch authors:", error);
+        setAuthors([]); // Set authors to an empty array in case of error
+      }
+    }
+
+    fetchAuthors();
+  }, []);
+
+  // Function to get author name by ID
+  const getAuthorName = (authorRef: string) => {
+    const author = authors.find((a) => a._id === authorRef);
+    return author ? author.name : "Unknown Author";
+  };
+
+  // Function to get Sunday date from yearWeek
+  const getSundayDate = (yearWeek: string): string => {
+    const [year, week] = yearWeek.split("w").map(Number);
+
+    // Create a date for the first day of the year
+    const firstDayOfYear = new Date(year, 0, 1);
+
+    // Calculate the day of the week for the first day of the year (0 = Sunday, 1 = Monday, etc.)
+    const firstDayOfWeek = firstDayOfYear.getDay();
+
+    // Calculate the date of the first Sunday of the year
+    const firstSunday = new Date(firstDayOfYear);
+    firstSunday.setDate(firstDayOfYear.getDate() + (7 - firstDayOfWeek) % 7);
+
+    // Calculate the date of the Sunday for the given week
+    const sundayDate = new Date(firstSunday);
+    sundayDate.setDate(firstSunday.getDate() + (week - 1) * 7);
+
+    // Format the date
+    return sundayDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
   // Extract all years from posts and messages
   const allYears = [
     ...new Set([
@@ -113,6 +174,10 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                     </p>
                   </div>
                 </Link>
+                {/* Date Published and Author */}
+                <p className="text-sm text-gray-500 mt-2">
+                  Published on: {getSundayDate(latestPost.yearWeek)} | Author: {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Unknown Author"}
+                </p>
               </div>
             )}
 
@@ -126,6 +191,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
                 className="bg-white border border-gray-300 rounded-lg px-3 py-2"
+                aria-label="Select year to filter posts"
               >
                 {allYears.sort((a, b) => b.localeCompare(a)).map((year) => (
                   <option key={year} value={year}>
@@ -142,7 +208,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
       <main className="container mx-auto max-w-3xl p-8">
         <br />
 
-          <h4>Year of {currentMessage.message}</h4>
+        <h4>Year of {currentMessage?.message || "Unknown"}</h4>
 
         <hr />
         <br />
@@ -165,6 +231,10 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                   {getContentPreview(post.content)}
                 </p>
               </Link>
+              {/* Date Published and Author */}
+              <p className="text-sm text-gray-500 mt-2">
+                Published on: {getSundayDate(post.yearWeek)} | Author: {post.author?._ref ? getAuthorName(post.author._ref) : "Unknown Author"}
+              </p>
               <br />
             </li>
           ))}

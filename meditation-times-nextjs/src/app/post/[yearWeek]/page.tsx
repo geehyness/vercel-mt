@@ -1,5 +1,4 @@
 import { client } from "@/sanity/client";
-// Remove this line: import { sanityFetch } from "@/sanity/live";
 import imageUrlBuilder from "@sanity/image-url";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { defineQuery, PortableText } from "next-sanity";
@@ -17,7 +16,10 @@ const POST_QUERY = defineQuery(`*[
     content,
     mainImage,
     createdAt,
-    slug
+    updatedAt,
+    slug,
+    author->{ name },
+    categories[]->{ title }
   }`);
 
 const { projectId, dataset } = client.config();
@@ -47,6 +49,9 @@ export default async function PostPage({
     mainImage,
     content,
     createdAt,
+    updatedAt,
+    author,
+    categories,
   } = post;
 
   const postImageUrl = mainImage
@@ -54,6 +59,7 @@ export default async function PostPage({
     : null;
 
   const formattedDate = new Date(createdAt).toLocaleDateString();
+  const updatedDate = updatedAt ? new Date(updatedAt).toLocaleDateString() : null;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -77,7 +83,35 @@ export default async function PostPage({
                 {title}
               </h1>
             )}
-            {formattedDate && <p className="text-sm text-gray-500">Published on: {formattedDate}</p>}
+            {/* Published on using createdAt */}
+            {formattedDate && (
+              <p className="text-sm text-gray-500">
+                Published on: {formattedDate}
+              </p>
+            )}
+            {updatedDate && (
+              <p className="text-sm text-gray-500">
+                Last updated: {updatedDate}
+              </p>
+            )}
+            {author?.name && (
+              <p className="text-sm text-gray-500">
+                Author: {author.name}
+              </p>
+            )}
+            {categories && categories.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm text-gray-500">Categories:</span>
+                {categories.map((category) => (
+                  <span
+                    key={category.title}
+                    className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded"
+                  >
+                    {category.title}
+                  </span>
+                ))}
+              </div>
+            )}
             {content && content.length > 0 && (
               <div className="prose max-w-none">
                 <PortableText value={content} />
