@@ -7,7 +7,7 @@ export function Loading() {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentUrlRef = useRef<string>();
+  const currentUrlRef = useRef<string | undefined>(undefined); // Explicit initial value of undefined
 
   // Update current URL reference
   useEffect(() => {
@@ -43,7 +43,7 @@ export function Loading() {
       document.removeEventListener("click", handleAnchorClick);
       document.removeEventListener("submit", handleFormSubmit);
     };
-  }, []);
+  },);
 
   // Reset loading state when navigation is complete
   useEffect(() => {

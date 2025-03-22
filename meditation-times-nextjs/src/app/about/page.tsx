@@ -1,6 +1,6 @@
-import { sanityFetch } from "@/sanity/live";
 import { defineQuery, PortableText } from "next-sanity";
 import Link from "next/link";
+import { client } from "@/lib/sanity.client"; // Import the Sanity client
 
 const ABOUT_PAGE_QUERY = defineQuery(`*[
   _type == "aboutPage"
@@ -15,9 +15,8 @@ const ABOUT_PAGE_QUERY = defineQuery(`*[
 }`);
 
 export default async function AboutPage() {
-  const { data: aboutData } = await sanityFetch({
-    query: ABOUT_PAGE_QUERY,
-  });
+  // Fetch data directly using the Sanity client
+  const aboutData = await client.fetch(ABOUT_PAGE_QUERY);
 
   if (!aboutData) {
     return (

@@ -1,33 +1,25 @@
 import type { Metadata } from "next";
-import { GeistSans, GeistMono } from 'geist/font';
-import "./globals.css";
-import { SanityLive } from "@/sanity/live";
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Providers } from "@/components/Providers";
-import { sanityLiveClient } from "@/lib/sanity.client";
-import { Loading } from "@/components/Loading";
+import "./globals.css"; // Assuming you have a global styles file
 
 export const metadata: Metadata = {
-  title: "Meditation Times",
-  description: "Your daily source for mindfulness and meditation practices",
+  title: "Meditation Times", // Replace with your actual title
+  description: "A website for meditation times and resources.", // Replace with your actual description
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body className="antialiased flex flex-col min-h-screen">
+    <html lang="en">
+      <body>
         <Providers>
-          <Header />
-          <main className="flex-grow">{children}</main>
+          {children}
           <Footer />
-          <Loading /> {/* Add the Loading component here */}
         </Providers>
-        <SanityLive client={sanityLiveClient} /> {/* Pass the client prop correctly */}
       </body>
     </html>
   );

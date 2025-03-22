@@ -1,5 +1,5 @@
 import { client } from "@/sanity/client";
-import { sanityFetch } from "@/sanity/live";
+// Remove this line: import { sanityFetch } from "@/sanity/live";
 import imageUrlBuilder from "@sanity/image-url";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { defineQuery, PortableText } from "next-sanity";
@@ -34,10 +34,9 @@ export default async function PostPage({
   const resolvedParams = await params;
   const { yearWeek } = resolvedParams;
   console.log("Params in PostPage:", resolvedParams);
-  const { data: post } = await sanityFetch({
-    query: POST_QUERY,
-    params: { yearWeek },
-  });
+
+  // Use client.fetch instead of sanityFetch
+  const post = await client.fetch(POST_QUERY, { yearWeek });
 
   if (!post) {
     notFound();
@@ -58,7 +57,6 @@ export default async function PostPage({
 
   return (
     <div className="flex flex-col min-h-screen">
-      
       <main className="container mx-auto grid gap-12 p-12 flex-grow">
         <div className="mb-4">
           <Link href="/">← Back to Meditation Times</Link>
@@ -88,7 +86,6 @@ export default async function PostPage({
           </div>
         </div>
       </main>
-      
     </div>
   );
 }
