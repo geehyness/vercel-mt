@@ -37,7 +37,7 @@ interface PostsListProps {
 export default function PostsList({ allPosts }: PostsListProps) {
   // Move useState to the top level
   const availableYears = allPosts
-    ? [...new Set(allPosts.map(post => post.yearWeek.slice(0, 4))].sort((a, b) => b.localeCompare(a))
+    ? [...new Set(allPosts.map(post => post.yearWeek.slice(0, 4)))].sort((a, b) => b.localeCompare(a))
     : [];
 
   const initialSelectedYear = availableYears.length > 0 ? availableYears[0] : new Date().getFullYear().toString();
