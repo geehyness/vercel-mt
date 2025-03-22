@@ -6,7 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Providers } from "@/components/Providers";
 import { sanityLiveClient } from "@/lib/sanity.client";
-import { Loading } from "@/components/Loading"; // Import the Loading component
+import { Loading } from "@/components/Loading";
 
 export const metadata: Metadata = {
   title: "Meditation Times",
@@ -23,11 +23,11 @@ export default function RootLayout({
       <body className="antialiased flex flex-col min-h-screen">
         <Providers>
           <Header />
-          <main className="flex-grow pt-16 md:pt-20">{children}</main> {/* Add padding-top */}
+          <main className="flex-grow">{children}</main>
           <Footer />
           <Loading /> {/* Add the Loading component here */}
         </Providers>
-        <SanityLive client={sanityLiveClient} />
+        <SanityLive client={sanityLiveClient} /> {/* Ensure the client prop is correctly passed */}
       </body>
     </html>
   );
