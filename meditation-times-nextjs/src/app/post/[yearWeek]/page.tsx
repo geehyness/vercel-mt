@@ -28,6 +28,11 @@ const urlFor = (source: SanityImageSource) =>
     ? imageUrlBuilder({ projectId, dataset }).image(source)
     : null;
 
+// Define the Category type
+interface Category {
+  title: string;
+}
+
 export default async function PostPage({
   params,
 }: {
@@ -102,7 +107,7 @@ export default async function PostPage({
             {categories && categories.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm text-gray-500">Categories:</span>
-                {categories.map((category) => (
+                {categories.map((category: Category) => (
                   <span
                     key={category.title}
                     className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded"
