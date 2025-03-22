@@ -22,7 +22,7 @@ interface Post {
   _id: string;
   title: string;
   yearWeek: string;
-  content: ContentBlock[]; // Updated type
+  content: ContentBlock[];
   mainImage: SanityImage;
   createdAt: string;
   slug: {
@@ -35,15 +35,17 @@ interface PostsListProps {
 }
 
 export default function PostsList({ allPosts }: PostsListProps) {
+  // Move useState to the top level
+  const availableYears = allPosts
+    ? [...new Set(allPosts.map(post => post.yearWeek.slice(0, 4))].sort((a, b) => b.localeCompare(a))
+    : [];
+
+  const initialSelectedYear = availableYears.length > 0 ? availableYears[0] : new Date().getFullYear().toString();
+  const [selectedYear, setSelectedYear] = useState<string>(initialSelectedYear); // ✅ Correct: Hook is always called
+
   if (!allPosts || allPosts.length === 0) {
     return <div className="text-center text-gray-500">No posts available.</div>;
   }
-
-  const availableYears = [...new Set(allPosts.map(post => post.yearWeek.slice(0, 4)))]
-    .sort((a, b) => b.localeCompare(a));
-
-  const initialSelectedYear = availableYears.length > 0 ? availableYears[0] : new Date().getFullYear().toString();
-  const [selectedYear, setSelectedYear] = useState<string>(initialSelectedYear);
 
   const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedYear(event.target.value);
