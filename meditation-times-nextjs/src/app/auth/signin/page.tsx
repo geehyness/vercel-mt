@@ -1,29 +1,25 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-
-    if (result?.error) {
-      setError("Invalid email or password");
-    } else {
-      router.push("/");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push("/"); // Redirect to home page after sign-in
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
@@ -31,7 +27,7 @@ export default function SignInPage() {
     <div className="max-w-md mx-auto mt-20 p-6 bg-white rounded shadow">
       <h1 className="text-2xl font-bold mb-6">Sign In</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSignIn}>
         <div className="mb-4">
           <label className="block mb-2">Email</label>
           <input
