@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Footer } from "@/components/Footer";
 import { Providers } from "@/components/Providers";
 import "./globals.css"; // Assuming you have a global styles file
+import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "Meditation Times", // Replace with your actual title
@@ -17,6 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
+          <Header />
           {children}
           <Footer />
         </Providers>
