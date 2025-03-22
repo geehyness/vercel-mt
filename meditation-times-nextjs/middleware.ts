@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { adminAuth } from '@/lib/firebase-admin';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Initialize Firebase Auth
-  const authInstance = getAuth();
 
   // Get the Firebase token from the request cookies
   const token = request.cookies.get('firebaseToken')?.value;
@@ -19,8 +15,8 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      // Verify the Firebase token
-      const decodedToken = await authInstance.verifyIdToken(token);
+      // Verify the Firebase token using the Admin SDK
+      const decodedToken = await adminAuth.verifyIdToken(token);
       if (!decodedToken) {
         // Redirect to sign-in page if the token is invalid
         return NextResponse.redirect(new URL('/auth/signin', request.url));

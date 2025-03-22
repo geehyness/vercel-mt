@@ -22,12 +22,7 @@ export function UserMenu() {
           <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base">
             Welcome, {user.email}
           </p>
-          <button
-            onClick={handleSignOut}
-            className="bg-red-600 text-white px-3 py-1 md:px-4 md:py-2 rounded hover:bg-red-700 text-sm md:text-base"
-          >
-            Sign Out
-          </button>
+          <SignOutButton /> {/* Use the SignOutButton component */}
         </>
       ) : (
         <Link
