@@ -1,22 +1,14 @@
 "use client";
 
 import { useAuth } from "@/components/Providers";
-import { auth } from "@/lib/firebase";
 import Link from "next/link";
+import SignOutButton from "./SignOutButton"; // Import the SignOutButton component
 
 export function UserMenu() {
   const { user } = useAuth(); // Get the authenticated user from Firebase
 
-  const handleSignOut = async () => {
-    try {
-      await auth.signOut(); // Sign out using Firebase
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   return (
-    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+    <div className="flex items-center gap-4">
       {user ? (
         <>
           <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base">
