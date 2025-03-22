@@ -76,33 +76,37 @@ export default function PostsList({ allPosts }: PostsListProps) {
         <ul className="flex flex-col gap-y-4">
           {filteredPosts.map((post: Post) => (
             <li className="border-b border-gray-200 pb-4" key={post._id}>
-              <Link 
-                href={`/post/${encodeURIComponent(post.yearWeek)}`} 
-                className="block hover:underline"
-              >
-                <div className="relative">
+            <Link 
+              href={`/post/${encodeURIComponent(post.yearWeek)}`} 
+              className="block hover:underline"
+            >
+              <div className="relative">
                 <div 
-  className="w-full rounded-lg flex items-center justify-center"
-  style={{ 
-    background: 'linear-gradient(to right, #333, aqua)', // Black to red gradient
-    width: '100%', 
-    height: '60px', // Reduced height
-  }}
->
-  <span className="text-gray-500"></span>
-</div>
-                  <div className="absolute top-2 left-2  bg-opacity-75 rounded-md p-2">
-                    <h2 className="text-lg font-bold text-white">
-                      {post.title}
-                    </h2>
-                  </div>
+                  className="w-full rounded-lg flex items-center justify-center"
+                  style={{ 
+                    background: `
+                      linear-gradient(135deg, rgba(255, 165, 0, 0.9), rgba(255, 0, 0, 0.9)),
+                      url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")
+                    `, // Gradient + subtle pattern
+                    width: '100%', 
+                    height: '60px', // Reduced height
+                    backgroundSize: 'cover', // Ensure the pattern covers the banner
+                  }}
+                >
+                  <span className="text-gray-500"></span>
                 </div>
-                <p className="mt-2 text-gray-700 line-clamp-2">
-                  {getContentPreview(post.content)}
-                </p>
-              </Link>
-              <br />
-            </li>
+                <div className="absolute top-2 left-2 bg-opacity-75 rounded-md p-2">
+                  <h2 className="text-lg font-bold text-white">
+                    {post.title} | Week {post.yearWeek.slice(5,8)}
+                  </h2>
+                </div>
+              </div>
+              <p className="mt-2 text-gray-700 line-clamp-2">
+                {getContentPreview(post.content)}
+              </p>
+            </Link>
+            <br />
+          </li>
           ))}
         </ul>
       </main>
