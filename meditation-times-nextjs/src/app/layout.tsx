@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className="antialiased flex flex-col min-h-screen">
         <Providers>
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow pt-16 md:pt-20">{children}</main> {/* Add padding-top */}
           <Footer />
           <Loading /> {/* Add the Loading component here */}
         </Providers>

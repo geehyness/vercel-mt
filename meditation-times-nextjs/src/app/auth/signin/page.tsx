@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 export default function SignInPage() {
@@ -19,7 +19,17 @@ export default function SignInPage() {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/"); // Redirect to home page after sign-in
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message); // Display Firebase error message
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      router.push("/"); // Redirect to home page after Google sign-in
+    } catch (err: any) {
+      setError(err.message); // Display Firebase error message
     }
   };
 
@@ -33,7 +43,7 @@ export default function SignInPage() {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value.trim())} // Trim whitespace
             className="w-full p-2 border rounded"
             required
           />
@@ -50,11 +60,17 @@ export default function SignInPage() {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 mb-4"
         >
           Sign In
         </button>
       </form>
+      <button
+        onClick={handleGoogleSignIn}
+        className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+      >
+        Sign In with Google
+      </button>
       <p className="mt-4 text-center">
         Don&apos;t have an account?{" "}
         <a href="/auth/signup" className="text-blue-600 hover:underline">

@@ -1,20 +1,30 @@
 "use client";
 
-import { signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/components/Providers";
+import { auth } from "@/lib/firebase";
 import Link from "next/link";
 
 export function UserMenu() {
-  const { data: session } = useSession();
+  const { user } = useAuth(); // Get the authenticated user from Firebase
+
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut(); // Sign out using Firebase
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
-    <div className="flex items-center gap-4">
-      {session?.user ? (
+    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+      {user ? (
         <>
-          <span>Hello, {session.user.name}</span>
+          <p className="text-gray-700 dark:text-gray-300 text-sm md:text-base">
+            Welcome, {user.email}
+          </p>
           <button
-            onClick={() => signOut()}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            onClick={handleSignOut}
+            className="bg-red-600 text-white px-3 py-1 md:px-4 md:py-2 rounded hover:bg-red-700 text-sm md:text-base"
           >
             Sign Out
           </button>
@@ -22,7 +32,7 @@ export function UserMenu() {
       ) : (
         <Link
           href="/auth/signin"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="text-blue-600 hover:underline text-sm md:text-base"
         >
           Sign In
         </Link>
