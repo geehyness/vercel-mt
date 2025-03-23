@@ -159,7 +159,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
             {latestPost && (
               <div className="mb-4">
                 <h4 className="text-lg font-bold text-gray-900 mb-2">
-                  Latest Meditation Time
+                  Latest Meditation Times
                 </h4>
                 <Link
                   href={`/post/${encodeURIComponent(latestPost.yearWeek)}`}
@@ -176,7 +176,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                 </Link>
                 {/* Date Published and Author */}
                 <p className="text-sm text-gray-500 mt-2">
-                  {getSundayDate(latestPost.yearWeek)} | {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
+                  {getSundayDate(latestPost.yearWeek)} | {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Pastor Nathanael Munashe-Takudzwa"}
                 </p>
               </div>
             )}
@@ -233,7 +233,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
               </Link>
               {/* Date Published and Author */}
               <p className="text-sm text-gray-500 mt-2">
-                {getSundayDate(post.yearWeek)} | {post.author?._ref ? getAuthorName(post.author._ref) : "Pastor Nathanael Munashe-TakudzwaUnknown Author"}
+                {getSundayDate(post.yearWeek)} | {post.author?._ref ? getAuthorName(post.author._ref) : "Pastor Nathanael Munashe-Takudzwa"}
               </p>
               <br />
             </li>
