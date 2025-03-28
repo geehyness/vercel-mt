@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react"; // Import loading spinner
 
+// Interface definitions
 interface ContentBlock {
   _type: string;
   children?: { text: string }[];
@@ -23,7 +25,7 @@ interface Post {
     current: string;
   };
   author?: {
-    _ref: string; // Reference to the author's ID
+    _ref: string;
   };
 }
 
@@ -41,59 +43,36 @@ interface PostsListProps {
 
 export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListProps) {
   const [authors, setAuthors] = useState<Author[]>([]);
+  const [loadingAuthors, setLoadingAuthors] = useState(true);
+  const [authorError, setAuthorError] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<string>("");
 
   // Fetch all authors from the database
   useEffect(() => {
     async function fetchAuthors() {
       try {
+        setLoadingAuthors(true);
+        setAuthorError(null);
+        
         const response = await fetch("/api/authors");
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`Failed to load authors (${response.status})`);
         }
         const data = await response.json();
         setAuthors(data);
       } catch (error) {
         console.error("Failed to fetch authors:", error);
-        setAuthors([]); // Set authors to an empty array in case of error
+        setAuthorError("Error loading author information");
+        setAuthors([{ _id: "default", name: "Pastor Nathanael Munashe-Takudzwa" }]);
+      } finally {
+        setLoadingAuthors(false);
       }
     }
 
     fetchAuthors();
   }, []);
 
-  // Function to get author name by ID
-  const getAuthorName = (authorRef: string) => {
-    const author = authors.find((a) => a._id === authorRef);
-    return author ? author.name : "Unknown Author";
-  };
-
-  // Function to get Sunday date from yearWeek
-  const getSundayDate = (yearWeek: string): string => {
-    const [year, week] = yearWeek.split("w").map(Number);
-
-    // Create a date for the first day of the year
-    const firstDayOfYear = new Date(year, 0, 1);
-
-    // Calculate the day of the week for the first day of the year (0 = Sunday, 1 = Monday, etc.)
-    const firstDayOfWeek = firstDayOfYear.getDay();
-
-    // Calculate the date of the first Sunday of the year
-    const firstSunday = new Date(firstDayOfYear);
-    firstSunday.setDate(firstDayOfYear.getDate() + (7 - firstDayOfWeek) % 7);
-
-    // Calculate the date of the Sunday for the given week
-    const sundayDate = new Date(firstSunday);
-    sundayDate.setDate(firstSunday.getDate() + (week - 1) * 7);
-
-    // Format the date
-    return sundayDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  // Extract all years from posts and messages
+  // Calculate years and highest year
   const allYears = [
     ...new Set([
       ...(yearlyMessages?.map((msg) => msg.year) || []),
@@ -101,27 +80,55 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
     ]),
   ];
 
-  // Find the highest year in the database
   const highestYear = allYears.length > 0
     ? allYears.reduce((a, b) => (a > b ? a : b))
     : new Date().getFullYear().toString();
 
-  // Initialize selectedYear to the highest year
-  const [selectedYear, setSelectedYear] = useState<string>(highestYear);
+  // Initialize selectedYear after authors load
+  useEffect(() => {
+    setSelectedYear(highestYear);
+  }, [highestYear]);
 
-  // Find the message for the selected year
-  const currentMessage = yearlyMessages.find((msg) => msg.year === selectedYear);
+  // Function to get author name by ID
+  const getAuthorName = (authorRef: string) => {
+    if (loadingAuthors) return <Loader2 className="h-4 w-4 animate-spin inline" />;
+    if (authorError) return "Pastor Nathanael Munashe-Takudzwa";
+    
+    const author = authors.find((a) => a._id === authorRef);
+    return author ? author.name : "Pastor Nathanael Munashe-Takudzwa";
+  };
 
-  // Filter posts for the selected year
+  // Function to get Sunday date from yearWeek
+  const getSundayDate = (yearWeek: string): string => {
+    const [year, week] = yearWeek.split("w").map(Number);
+    const firstDayOfYear = new Date(year, 0, 1);
+    const firstDayOfWeek = firstDayOfYear.getDay();
+    const firstSunday = new Date(firstDayOfYear);
+    firstSunday.setDate(firstDayOfYear.getDate() + (7 - firstDayOfWeek) % 7);
+    const sundayDate = new Date(firstSunday);
+    sundayDate.setDate(firstSunday.getDate() + (week - 1) * 7);
+
+    return sundayDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  // Filter posts for selected year
   const filteredPosts = allPosts
     .filter((post) => post.yearWeek.startsWith(selectedYear))
     .slice(0, 12);
 
-  // Get the latest post for the selected year
-  const latestPost = filteredPosts.length > 0 ? filteredPosts[0] : null;
+  const currentMessage = yearlyMessages.find((msg) => msg.year === selectedYear);
+  const latestPost = filteredPosts[0] || null;
 
   if (!allPosts || allPosts.length === 0) {
-    return <div className="text-center text-gray-500">No posts available.</div>;
+    return (
+      <div className="text-center text-gray-500 p-8">
+        No posts available.
+      </div>
+    );
   }
 
   return (
@@ -130,34 +137,28 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
       <div className="flex-grow flex items-center justify-center bg-gradient-to-r from-orange-400 to-red-500">
         <div className="container mx-auto max-w-3xl p-8">
           <div className="bg-white rounded-lg shadow-lg p-6">
-            {/* Year */}
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               {selectedYear}
             </h2>
 
-            <hr />
-            <br />
+            <hr className="my-4" />
 
-            {/* Year Message Title */}
-            {currentMessage?.message && (
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Year of {currentMessage.message}
-              </h2>
+            {currentMessage && (
+              <>
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                  Year of {currentMessage.message}
+                </h2>
+                {currentMessage.description && (
+                  <p className="text-gray-700 mb-4">
+                    {currentMessage.description}
+                  </p>
+                )}
+                <hr className="my-4" />
+              </>
             )}
 
-            {/* Year Message Description */}
-            {currentMessage?.description && (
-              <p className="text-gray-700 mb-4">
-                {currentMessage.description}
-              </p>
-            )}
-
-            <hr />
-            <br />
-
-            {/* Latest Post for Selected Year */}
             {latestPost && (
-              <div className="mb-4">
+              <div className="mb-6">
                 <h4 className="text-lg font-bold text-gray-900 mb-2">
                   Latest Meditation Times
                 </h4>
@@ -167,21 +168,22 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                 >
                   <div className="bg-gradient-to-r from-orange-400 to-red-500 p-4 rounded-lg">
                     <h5 className="text-lg font-bold text-white">
-                      {latestPost.title} | Week {latestPost.yearWeek.slice(5, 8)}
+                      {latestPost.title} | Week {latestPost.yearWeek.slice(5)}
                     </h5>
                     <p className="mt-2 text-white line-clamp-2">
                       {getContentPreview(latestPost.content)}
                     </p>
                   </div>
                 </Link>
-                {/* Date Published and Author */}
                 <p className="text-sm text-gray-500 mt-2">
-                  {getSundayDate(latestPost.yearWeek)} | {latestPost.author?._ref ? getAuthorName(latestPost.author._ref) : "Pastor Nathanael Munashe-Takudzwa"}
+                  {getSundayDate(latestPost.yearWeek)} |{" "}
+                  {latestPost.author?._ref 
+                    ? getAuthorName(latestPost.author._ref)
+                    : "Pastor Nathanael Munashe-Takudzwa"}
                 </p>
               </div>
             )}
 
-            {/* Year Picker */}
             <div className="mt-4">
               <label htmlFor="year-select" className="mr-2 text-gray-700">
                 Select Year:
@@ -191,7 +193,7 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
                 className="bg-white border border-gray-300 rounded-lg px-3 py-2"
-                aria-label="Select year to filter posts"
+                disabled={!selectedYear}
               >
                 {allYears.sort((a, b) => b.localeCompare(a)).map((year) => (
                   <option key={year} value={year}>
@@ -206,36 +208,32 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
 
       {/* Posts List Section */}
       <main className="container mx-auto max-w-3xl p-8">
-        <br />
+        <h3 className="text-xl font-semibold mb-4">
+          Year of {currentMessage?.message || "Unknown"}
+        </h3>
 
-        <h4>Year of {currentMessage?.message || "Unknown"}</h4>
-
-        <hr />
-        <br />
-
-        <ul className="flex flex-col gap-y-4">
-          {filteredPosts.map((post: Post) => (
-            <li className="border-b border-gray-200 pb-4" key={post._id}>
+        <ul className="space-y-6">
+          {filteredPosts.map((post) => (
+            <li key={post._id} className="border-b border-gray-200 pb-6">
               <Link
                 href={`/post/${encodeURIComponent(post.yearWeek)}`}
                 className="block hover:underline"
               >
-                <div className="relative">
-                  <div className="w-full rounded-lg flex items-center justify-center bg-gradient-to-r from-orange-400 to-red-500 p-4">
-                    <h2 className="text-lg font-bold text-white">
-                      {post.title} | Week {post.yearWeek.slice(5, 8)}
-                    </h2>
-                  </div>
+                <div className="bg-gradient-to-r from-orange-400 to-red-500 p-4 rounded-lg">
+                  <h2 className="text-lg font-bold text-white">
+                    {post.title} | Week {post.yearWeek.slice(5)}
+                  </h2>
                 </div>
                 <p className="mt-2 text-gray-700 line-clamp-2">
                   {getContentPreview(post.content)}
                 </p>
               </Link>
-              {/* Date Published and Author */}
               <p className="text-sm text-gray-500 mt-2">
-                {getSundayDate(post.yearWeek)} | {post.author?._ref ? getAuthorName(post.author._ref) : "Pastor Nathanael Munashe-Takudzwa"}
+                {getSundayDate(post.yearWeek)} |{" "}
+                {post.author?._ref
+                  ? getAuthorName(post.author._ref)
+                  : "Pastor Nathanael Munashe-Takudzwa"}
               </p>
-              <br />
             </li>
           ))}
         </ul>
@@ -244,18 +242,16 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
   );
 }
 
+// Content preview helper function
 function getContentPreview(content: ContentBlock[], maxLength: number = 150): string {
-  if (!content || !Array.isArray(content)) return "";
-
-  const text = content
-    .map((block) => {
-      if (block._type === "block" && block.children) {
-        return block.children.map((child) => child.text).join(" ");
-      }
-      return "";
-    })
+  if (!content) return "";
+  
+  return content
+    .filter(block => block._type === "block" && block.children)
+    .flatMap(block => block.children!.map(child => child.text))
     .join(" ")
-    .trim();
-
-  return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLength)
+    .trimEnd() + (content.length > maxLength ? "..." : "");
 }

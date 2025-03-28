@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.sanity.io" },
       { protocol: "https", hostname: "placehold.co" },
     ],
+    domains:[
+      'lh3.googleusercontent.com', // Google user content
+    ]
   },
 };
 

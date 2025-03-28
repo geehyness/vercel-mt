@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Footer } from "@/components/Footer";
-import { Providers } from "@/components/Providers";
-import "./globals.css"; // Assuming you have a global styles file
+import { Inter } from "next/font/google";
+import "./globals.css";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { AuthProvider } from "@/components/AuthProvider"; // Corrected import path
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Meditation Times", // Replace with your actual title
-  description: "A website for meditation times and resources.", // Replace with your actual description
+  title: "Meditation Times",
+  description: "Daily spiritual guidance through meditation and prayer",
 };
 
 export default function RootLayout({
@@ -15,20 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <Providers>
-          {/* Header */}
+    <html lang="en" className={inter.className}>
+      <body className="min-h-screen flex flex-col">
+        <AuthProvider>
           <Header />
-
-          {/* Main Content with Padding */}
-          <div style={{ paddingTop: "var(--header-height, 60px)" }}>
-            {children}
-          </div>
-
-          {/* Footer */}
+          <main className="flex-grow pt-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              {children}
+            </div>
+          </main>
           <Footer />
-        </Providers>
+        </AuthProvider>
       </body>
     </html>
   );

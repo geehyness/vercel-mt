@@ -1,9 +1,10 @@
+// ./src/components/Loading.tsx
 "use client";
 
 import { useEffect, useState, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export function Loading() {
+function Loading() {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -64,3 +65,5 @@ export function Loading() {
     </div>
   );
 }
+
+export default Loading;

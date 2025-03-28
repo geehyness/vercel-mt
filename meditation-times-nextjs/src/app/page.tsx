@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { readClient } from "@/lib/sanity/client";
 import PostsList from "@/components/PostsList";
 
 interface ContentBlock {
@@ -61,11 +61,11 @@ const options = { next: { revalidate: 30 } };
 export default async function IndexPage() {
   try {
     console.log('Fetching all posts for year filtering...');
-    const allPosts = await client.fetch<Post[]>(POSTS_QUERY, {}, options);
+    const allPosts = await readClient.fetch<Post[]>(POSTS_QUERY, {}, options);
     console.log('Fetched all posts:', allPosts.length);
 
     console.log('Fetching yearly messages...');
-    const yearlyMessages = await client.fetch<YearMessage[]>(YEAR_MESSAGES_QUERY, {}, options);
+    const yearlyMessages = await readClient.fetch<YearMessage[]>(YEAR_MESSAGES_QUERY, {}, options);
     console.log('Fetched yearly messages:', yearlyMessages.length);
 
     if (!allPosts || allPosts.length === 0) {
