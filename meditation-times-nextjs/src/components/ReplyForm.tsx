@@ -29,9 +29,9 @@ export default function ReplyForm({ discussionId }: ReplyFormProps) {
       await createReply({
         content,
         discussionId,
-        userId: appUser.uid,
-        userName: appUser.name,
-        userEmail: appUser.email
+        authorRef: appUser.uid,
+        authorName: appUser.displayName || appUser.email?.split('@')[0] || 'Anonymous',
+        authorEmail: appUser.email || ''
       })
 
       router.refresh()
@@ -58,11 +58,12 @@ export default function ReplyForm({ discussionId }: ReplyFormProps) {
         rows={4}
         placeholder="Write your reply..."
         required
+        minLength={10}
       />
       
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !content.trim()}
         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 transition-colors"
       >
         {isSubmitting ? 'Submitting...' : 'Post Reply'}

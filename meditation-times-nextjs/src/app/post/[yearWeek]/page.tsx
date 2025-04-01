@@ -1,4 +1,4 @@
-import { client } from "@/sanity/client";
+import { readClient } from "@/lib/sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { defineQuery, PortableText } from "next-sanity";
@@ -22,7 +22,7 @@ const POST_QUERY = defineQuery(`*[
     categories[]->{ title }
   }`);
 
-const { projectId, dataset } = client.config();
+const { projectId, dataset } = readClient.config();
 const urlFor = (source: SanityImageSource) =>
   projectId && dataset
     ? imageUrlBuilder({ projectId, dataset }).image(source)
@@ -42,8 +42,8 @@ export default async function PostPage({
   const { yearWeek } = resolvedParams;
   console.log("Params in PostPage:", resolvedParams);
 
-  // Use client.fetch instead of sanityFetch
-  const post = await client.fetch(POST_QUERY, { yearWeek });
+  // Use readClient.fetch instead of sanityFetch
+  const post = await readClient.fetch(POST_QUERY, { yearWeek });
 
   if (!post) {
     notFound();

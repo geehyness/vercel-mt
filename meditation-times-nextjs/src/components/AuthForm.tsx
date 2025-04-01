@@ -1,67 +1,55 @@
-"use client";
+// components/AuthForm.tsx
+"use client"
+import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useAuth } from './AuthProvider'
+import Link from 'next/link'
+import { FcGoogle } from 'react-icons/fc'
+import { Loader2 } from 'lucide-react'
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { auth, googleProvider } from '@/lib/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  updateProfile
-} from 'firebase/auth';
-import Link from 'next/link';
-import { FcGoogle } from 'react-icons/fc';
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+interface AuthFormProps {
+  type: 'signin' | 'signup'
+}
 
-export function AuthForm({ type }: { type: 'signin' | 'signup' }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+export function AuthForm({ type }: AuthFormProps) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const { 
+    loading, 
+    signInWithEmail, 
+    signUpWithEmail, 
+    signInWithGoogle 
+  } = useAuth()
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    e.preventDefault()
+    setError('')
 
     try {
       if (type === 'signup') {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        if (name) {
-          await updateProfile(userCredential.user, {
-            displayName: name
-          });
-        }
+        await signUpWithEmail(email, password, name)
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmail(email, password)
       }
-
-      const redirectUrl = searchParams.get('redirect') || '/';
-      router.push(redirectUrl);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+      router.push(searchParams.get('redirect') || '/')
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'Authentication failed')
     }
-  };
+  }
 
   const handleGoogleSignIn = async () => {
-    setError('');
-    setLoading(true);
-
+    setError('')
     try {
-      await signInWithPopup(auth, googleProvider);
-      const redirectUrl = searchParams.get('redirect') || '/';
-      router.push(redirectUrl);
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
+      await signInWithGoogle()
+      router.push(searchParams.get('redirect') || '/')
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'Google authentication failed')
     }
-  };
+  }
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -143,5 +131,5 @@ export function AuthForm({ type }: { type: 'signin' | 'signup' }) {
         </Link>
       </div>
     </div>
-  );
+  )
 }

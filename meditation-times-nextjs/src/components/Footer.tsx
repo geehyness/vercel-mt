@@ -54,7 +54,7 @@ export function Footer() {
                 >
                   About Us
                 </Link>
-              </li>
+              </li>{/*
               <li>
                 <Link
                   href="/community/discussions"
@@ -70,7 +70,7 @@ export function Footer() {
                 >
                   Kids Corner
                 </Link>
-              </li>
+              </li>*/}
               <li>
                 <Link
                   href="/contact"

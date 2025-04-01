@@ -1,8 +1,19 @@
-import { defineQuery, PortableText } from "next-sanity";
+import { defineQuery, PortableText, PortableTextBlock } from "next-sanity";
 import Link from "next/link";
 import { client } from "@/lib/sanity.client"; // Import the Sanity client
 
-const ABOUT_PAGE_QUERY = defineQuery(`*[
+// Define the TypeScript interface for the About Page data
+interface AboutPageData {
+  title?: string;
+  missionTitle?: string;
+  missionContent?: PortableTextBlock[];
+  whoWeAreTitle?: string;
+  whoWeAreContent?: PortableTextBlock[];
+  whatYoullFindTitle?: string;
+  whatYoullFindContent?: PortableTextBlock[];
+}
+
+const ABOUT_PAGE_QUERY = defineQuery(`*[ // Remove the generic type here
   _type == "aboutPage"
 ][0]{
   title,
@@ -16,7 +27,7 @@ const ABOUT_PAGE_QUERY = defineQuery(`*[
 
 export default async function AboutPage() {
   // Fetch data directly using the Sanity client
-  const aboutData = await client.fetch(ABOUT_PAGE_QUERY);
+  const aboutData = await client.fetch(ABOUT_PAGE_QUERY) as AboutPageData; // Explicit type assertion here
 
   if (!aboutData) {
     return (

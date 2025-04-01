@@ -1,11 +1,32 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { AuthProvider } from "@/components/AuthProvider"; // Corrected import path
+import { AuthProvider } from "@/components/AuthProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+// Local font configuration with absolute paths
+const inter = localFont({
+  src: [
+    {
+      path: "/fonts/Inter-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "/fonts/Inter-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "/fonts/Inter-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+  ],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "Meditation Times",
@@ -18,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body className="min-h-screen flex flex-col">
+    <html lang="en" className={`${inter.variable} font-sans`}>
+      <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
         <AuthProvider>
           <Header />
           <main className="flex-grow pt-16">

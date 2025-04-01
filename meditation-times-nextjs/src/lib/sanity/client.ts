@@ -1,27 +1,38 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
-// Read client (public data)
-export const readClient = createClient({
+const config = {
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
   apiVersion: '2024-03-30',
+  token: process.env.NEXT_PUBLIC_SANITY_WRITE_TOKEN,
+  ignoreBrowserTokenWarning: true,
+};
+
+export const readClient = createClient({
+  ...config,
   useCdn: true,
   token: process.env.SANITY_READ_TOKEN,
   perspective: 'published'
 });
 
-// Write client (authenticated mutations)
 export const writeClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2024-03-30',
+  ...config,
   useCdn: false,
-  token: process.env.SANITY_WRITE_TOKEN,
-  ignoreBrowserTokenWarning: true,
   perspective: 'raw'
 });
 
-// Image URL builder
-const builder = imageUrlBuilder(readClient);
-export const urlFor = (source: any) => builder.image(source);
+export const client = writeClient;
+
+export const urlFor = (source: SanityImageSource) => 
+  imageUrlBuilder(readClient).image(source);
+
+export const sanityFetch = async <T>(query: string, params = {}) => {
+  try {
+    return await readClient.fetch<T>(query, params);
+  } catch (error) {
+    console.error('Sanity fetch error:', error);
+    throw error;
+  }
+};

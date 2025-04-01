@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 interface ReplyCardProps {
   content: string
   authorName: string
@@ -17,10 +19,12 @@ export default function ReplyCard({
     <div className={`p-4 mb-4 rounded-lg border ${isAuthor ? 'bg-blue-50 border-blue-200' : 'bg-white border-gray-200'}`}>
       <div className="flex items-start gap-3">
         {authorAvatar && (
-          <img 
+          <Image 
             src={authorAvatar} 
             alt={authorName}
-            className="w-10 h-10 rounded-full object-cover"
+            width={40}
+            height={40}
+            className="rounded-full object-cover"
           />
         )}
         <div className="flex-1">

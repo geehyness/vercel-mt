@@ -1,4 +1,5 @@
 // app/kids/page.tsx
+import Link from 'next/link' // Add at top
 import { readClient } from '@/lib/sanity/client'
 
 export default async function KidsPage() {

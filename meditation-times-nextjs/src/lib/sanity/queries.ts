@@ -1,55 +1,105 @@
-import { readClient, writeClient } from './client';
+import { createClient } from '@sanity/client'
+import type { SanityClient } from '@sanity/client'
 
-interface BiblePassage {
-  book: string;
-  chapter: number;
-  verseStart: number;
-  verseEnd?: number;
-  text?: string;
+// Configuration
+const config = {
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  apiVersion: '2023-05-03',
+  useCdn: process.env.NODE_ENV === 'production',
+  token: process.env.NEXT_PUBLIC_SANITY_WRITE_TOKEN
 }
 
-interface DiscussionInput {
-  title: string;
-  content: string;
-  biblePassage: BiblePassage;
-  authorRef: string;
-  authorName: string;
-  authorEmail: string;
+// Clients
+const readClient: SanityClient = createClient({
+  ...config,
+  useCdn: true
+})
+
+const writeClient: SanityClient = createClient({
+  ...config,
+  useCdn: false,
+  token: process.env.NEXT_PUBLIC_SANITY_WRITE_TOKEN
+})
+
+// Type definitions
+interface Discussion {
+  _id: string
+  _type: 'discussion'
+  title: string
+  content: string
+  biblePassage: {
+    book: string
+    chapter: number
+    verseStart: number
+    verseEnd?: number
+  }
+  authorRef: string
+  authorName: string
+  authorEmail: string
+  createdAt: string
+  updatedAt?: string
+  isFeatured?: boolean
 }
 
 interface ReplyInput {
-  content: string;
-  discussionId: string;
-  authorRef: string;
-  authorName: string;
-  authorEmail: string;
+  content: string
+  discussionId: string
+  authorRef: string
+  authorName: string
+  authorEmail: string
 }
 
-// WRITE OPERATIONS
-export async function createDiscussion({
-  title,
-  content,
-  biblePassage,
-  authorRef,
-  authorName,
-  authorEmail
-}: DiscussionInput) {
-  return writeClient.create({
+// Discussion Operations
+export async function createDiscussion(doc: Omit<Discussion, '_id' | '_type' | 'createdAt'>): Promise<Discussion> {
+  return await writeClient.create({
     _type: 'discussion',
-    title,
-    content,
-    biblePassage,
-    author: {
-      _type: 'reference',
-      _ref: authorRef
-    },
-    authorName,
-    authorEmail,
-    isFeatured: false,
-    createdAt: new Date().toISOString()
-  });
+    createdAt: new Date().toISOString(),
+    ...doc
+  })
 }
 
+export async function getDiscussionById(id: string): Promise<Discussion | null> {
+  return await readClient.fetch(`
+    *[_type == "discussion" && _id == $id][0] {
+      ...,
+      "replies": *[_type == "reply" && discussion._ref == ^._id] | order(createdAt asc) {
+        _id,
+        content,
+        authorName,
+        createdAt
+      }
+    }
+  `, { id })
+}
+export async function getDiscussionsByAuthor(authorId: string): Promise<Discussion[]> {
+  return await readClient.fetch(`
+    *[_type == "discussion" && authorRef == $authorId] | order(createdAt desc) {
+      ...,
+      "replies": count(*[_type == "reply" && discussion._ref == ^._id])
+    }
+  `, { authorId })
+}
+
+export async function updateDiscussion(id: string, doc: Partial<Discussion>): Promise<Discussion> {
+  return await writeClient.patch(id)
+    .set({ ...doc, updatedAt: new Date().toISOString() })
+    .commit()
+}
+
+export async function deleteDiscussion(id: string): Promise<void> {
+  await writeClient.delete(id)
+}
+
+export async function discussionExists(id: string): Promise<boolean> {
+  const count: number = await readClient.fetch(
+    `count(*[_type == "discussion" && _id == $id])`,
+    { id }
+  )
+  return count > 0
+}
+
+// Reply Operations
 export async function createReply({
   content,
   discussionId,
@@ -57,68 +107,36 @@ export async function createReply({
   authorName,
   authorEmail
 }: ReplyInput) {
-  return writeClient.create({
+  return await writeClient.create({
     _type: 'reply',
     content,
     discussion: {
       _type: 'reference',
       _ref: discussionId
     },
-    author: {
-      _type: 'reference',
-      _ref: authorRef
-    },
+    authorRef,
     authorName,
     authorEmail,
     createdAt: new Date().toISOString()
-  });
+  })
 }
 
-// READ OPERATIONS
-export async function getDiscussionWithReplies(id: string) {
-  return readClient.fetch(`
-    *[_type == "discussion" && _id == $id][0] {
+export async function getRepliesForDiscussion(discussionId: string) {
+  return await readClient.fetch(`
+    *[_type == "reply" && discussion._ref == $discussionId] | order(createdAt asc) {
       _id,
-      title,
       content,
-      biblePassage,
-      author->{
-        _id,
-        name,
-        email,
-        "avatar": image.asset->url
-      },
       authorName,
       authorEmail,
-      isFeatured,
-      createdAt,
-      "replies": *[_type == "reply" && discussion._ref == $id] | order(createdAt asc) {
-        _id,
-        content,
-        author->{
-          _id,
-          name,
-          "avatar": image.asset->url
-        },
-        authorName,
-        createdAt
-      }
-    }
-  `, { id });
-}
-
-// Additional read operations
-export async function getFeaturedDiscussions() {
-  return readClient.fetch(`
-    *[_type == "discussion" && isFeatured == true] | order(createdAt desc) {
-      _id,
-      title,
-      biblePassage,
-      author->{
-        name,
-        "avatar": image.asset->url
-      },
       createdAt
     }
-  `);
+  `, { discussionId })
 }
+
+
+const sanityClients = {
+  read: readClient,
+  write: writeClient
+};
+
+export default sanityClients;

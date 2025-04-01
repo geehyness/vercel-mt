@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Loader2 } from "lucide-react"; // Import loading spinner
+import { Loader2 } from "lucide-react";
+import { readClient } from "@/lib/sanity/client";
 
 // Interface definitions
 interface ContentBlock {
@@ -13,6 +14,7 @@ interface ContentBlock {
 interface Author {
   _id: string;
   name: string;
+  slug?: string;
 }
 
 interface Post {
@@ -41,35 +43,70 @@ interface PostsListProps {
   yearlyMessages?: YearMessage[];
 }
 
+const AUTHORS_QUERY = `*[_type == "author"] {
+  _id,
+  name,
+  "slug": slug.current
+}`;
+
 export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListProps) {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [loadingAuthors, setLoadingAuthors] = useState(true);
   const [authorError, setAuthorError] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<string>("");
 
-  // Fetch all authors from the database
   useEffect(() => {
+    let mounted = true;
+    const controller = new AbortController();
+
     async function fetchAuthors() {
       try {
         setLoadingAuthors(true);
         setAuthorError(null);
-        
-        const response = await fetch("/api/authors");
-        if (!response.ok) {
-          throw new Error(`Failed to load authors (${response.status})`);
+
+        const authors = await readClient.fetch<Author[]>(AUTHORS_QUERY, {}, {
+          next: { revalidate: 60 } // Revalidate every 60 seconds
+        });
+
+        if (!mounted) return;
+
+        if (!authors?.length) {
+          console.warn('No authors found - using fallback');
+          setAuthors([{
+            _id: "default",
+            name: "Pastor Nathanael Munashe-Takudzwa",
+            isFallback: true
+          }]);
+          return;
         }
-        const data = await response.json();
-        setAuthors(data);
+
+        setAuthors(authors);
       } catch (error) {
+        if (!mounted) return;
+
         console.error("Failed to fetch authors:", error);
-        setAuthorError("Error loading author information");
-        setAuthors([{ _id: "default", name: "Pastor Nathanael Munashe-Takudzwa" }]);
+        setAuthorError(
+          error instanceof Error ? error.message : "Failed to load authors"
+        );
+        setAuthors([{
+          _id: "default",
+          name: "Pastor Nathanael Munashe-Takudzwa",
+          isFallback: true,
+          error: error instanceof Error ? error.message : "Unknown error"
+        }]);
       } finally {
-        setLoadingAuthors(false);
+        if (mounted) {
+          setLoadingAuthors(false);
+        }
       }
     }
 
     fetchAuthors();
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
   }, []);
 
   // Calculate years and highest year
@@ -242,7 +279,6 @@ export default function PostsList({ allPosts, yearlyMessages = [] }: PostsListPr
   );
 }
 
-// Content preview helper function
 function getContentPreview(content: ContentBlock[], maxLength: number = 150): string {
   if (!content) return "";
   

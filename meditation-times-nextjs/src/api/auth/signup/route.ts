@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const { name, email, password } = validation.data;
 
     // Check if user exists
-    const existingUser = await client.fetch(
+    const existingUser: number = await client.fetch(
       `count(*[_type == "user" && email == $email])`,
       { email }
     );

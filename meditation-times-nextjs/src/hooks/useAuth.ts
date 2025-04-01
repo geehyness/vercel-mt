@@ -1,119 +1,123 @@
-"use client";
-
+// hooks/useAuth.ts
 import { useState, useEffect } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
-
-interface FirebaseUser {
-  uid: string;
-  email: string;
-  displayName: string | null;
-  photoURL: string | null;
-  metadata: {
-    creationTime?: string;
-    lastSignInTime?: string;
-  };
-}
+import { 
+  User,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut as firebaseSignOut
+} from "firebase/auth";
+import { 
+  doc, 
+  setDoc, 
+  getDoc,
+  serverTimestamp 
+} from "firebase/firestore";
+import { auth, db, googleProvider } from "@/lib/firebase";
 
 interface AppUser {
   uid: string;
   email: string;
-  name: string;
+  displayName: string;
+  photoURL?: string;
   createdAt: string;
   lastLogin: string;
 }
 
+interface AuthState {
+  user: User | null;
+  appUser: AppUser | null;
+  loading: boolean;
+  error: string | null;
+}
+
 export function useAuth() {
-  const [state, setState] = useState({
-    user: null as FirebaseUser | null,
-    appUser: null as AppUser | null,
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    appUser: null,
     loading: true,
-    error: null as string | null,
+    error: null
   });
 
+  // Auth state persistence
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      try {
-        if (!firebaseUser) {
-          setState({ user: null, appUser: null, loading: false, error: null });
-          return;
-        }
-
-        const userRef = doc(db, "users", firebaseUser.uid);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
-          // Existing user - update last login
-          await setDoc(userRef, {
-            lastLogin: new Date().toISOString()
-          }, { merge: true });
-          
-          setState({
-            user: {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
-              metadata: {
-                creationTime: firebaseUser.metadata.creationTime,
-                lastSignInTime: firebaseUser.metadata.lastSignInTime
-              }
-            },
-            appUser: userDoc.data() as AppUser,
-            loading: false,
-            error: null
-          });
-        } else {
-          // New user - create document
-          const newUser: AppUser = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email || '',
-            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-            createdAt: new Date().toISOString(),
-            lastLogin: new Date().toISOString()
-          };
-
-          await setDoc(userRef, newUser);
-
-          setState({
-            user: {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
-              metadata: {
-                creationTime: firebaseUser.metadata.creationTime,
-                lastSignInTime: firebaseUser.metadata.lastSignInTime
-              }
-            },
-            appUser: newUser,
-            loading: false,
-            error: null
-          });
-        }
-      } catch (error: any) {
-        console.error("Auth error:", error);
-        setState({
-          user: firebaseUser ? {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email || '',
-            displayName: firebaseUser.displayName,
-            photoURL: firebaseUser.photoURL,
-            metadata: {
-              creationTime: firebaseUser.metadata.creationTime,
-              lastSignInTime: firebaseUser.metadata.lastSignInTime
-            }
-          } : null,
-          appUser: null,
-          loading: false,
-          error: error.message
-        });
-      }
-    });
-
+    const unsubscribe = onAuthStateChanged(auth, handleAuthStateChange);
     return unsubscribe;
   }, []);
 
-  return state;
+  const handleAuthStateChange = async (firebaseUser: User | null) => {
+    try {
+      if (!firebaseUser) {
+        setState({ user: null, appUser: null, loading: false, error: null });
+        return;
+      }
+
+      const userRef = doc(db, "users", firebaseUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      const userData = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email || '',
+        displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+        photoURL: firebaseUser.photoURL || '',
+        lastLogin: serverTimestamp()
+      };
+
+      if (userDoc.exists()) {
+        await setDoc(userRef, userData, { merge: true });
+      } else {
+        await setDoc(userRef, {
+          ...userData,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      setState({
+        user: firebaseUser,
+        appUser: { 
+          ...userData,
+          createdAt: userDoc.exists() ? userDoc.data().createdAt : new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        },
+        loading: false,
+        error: null
+      });
+    } catch (error) {
+      setState({
+        user: null,
+        appUser: null,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Authentication error'
+      });
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      setState(prev => ({ ...prev, loading: true }));
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Sign in failed',
+        loading: false
+      }));
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Sign out failed'
+      }));
+    }
+  };
+
+  return {
+    ...state,
+    signInWithGoogle,
+    signOut
+  };
 }

@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createDiscussion } from '@/lib/sanity/queries';
 import { useAuth } from '@/hooks/useAuth';
 import useBible from '@/hooks/useBible';
+import { writeClient } from '@/lib/sanity.client';
+import {TokenDebug} from '@/components/TokenDebug'
 
 interface BiblePassage {
   book: string;
@@ -17,12 +18,20 @@ interface BiblePassage {
 export default function NewDiscussionPage() {
   const router = useRouter();
   const { user: appUser } = useAuth();
-  const { bible, loading: bibleLoading, getVerseText, getChapterVerses } = useBible();
+  const { bible, loading: bibleLoading, getVerseText } = useBible();
+  
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    biblePassage: {} as BiblePassage,
+    biblePassage: {
+      book: '',
+      chapter: 0,
+      verseStart: 0,
+      verseEnd: undefined as number | undefined,
+      text: ''
+    }
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,10 +41,11 @@ export default function NewDiscussionPage() {
   const [selectedVerseStart, setSelectedVerseStart] = useState<number | null>(null);
   const [selectedVerseEnd, setSelectedVerseEnd] = useState<number | null>(null);
 
+  // Available options
   const availableBooks = bible ? Object.keys(bible) : [];
   const availableChapters = selectedBook && bible ? Object.keys(bible[selectedBook]).map(Number) : [];
-  const availableVerses = selectedBook && selectedChapter && bible 
-    ? Object.keys(bible[selectedBook][selectedChapter.toString()]).map(Number) 
+  const availableVerses = selectedBook && selectedChapter && bible
+    ? Object.keys(bible[selectedBook][selectedChapter.toString()]).map(Number)
     : [];
 
   const handlePassageSelect = () => {
@@ -45,8 +55,8 @@ export default function NewDiscussionPage() {
     }
 
     const verseText = getVerseText(selectedBook, selectedChapter, selectedVerseStart);
-    const endVerseText = selectedVerseEnd 
-      ? getVerseText(selectedBook, selectedChapter, selectedVerseEnd) 
+    const endVerseText = selectedVerseEnd
+      ? getVerseText(selectedBook, selectedChapter, selectedVerseEnd)
       : null;
 
     setFormData({
@@ -61,64 +71,77 @@ export default function NewDiscussionPage() {
         } - ${verseText}${endVerseText ? ` ... ${endVerseText}` : ''}`
       }
     });
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setError('');
+    setIsSubmitting(true);
+
     if (!appUser) {
       setError('You must be logged in to create a discussion');
+      setIsSubmitting(false);
       return;
     }
-  
-    if (!formData.title || !formData.biblePassage.book) {
-      setError('Please fill in all required fields');
+
+    if (!formData.title) {
+      setError('Discussion title is required');
+      setIsSubmitting(false);
       return;
     }
-  
-    setIsSubmitting(true);
+
+    if (!formData.biblePassage.book) {
+      setError('Please select a Bible passage');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const result = await createDiscussion({
+      const result = await writeClient.create({
+        _type: 'discussion',
         title: formData.title,
         content: formData.content,
-        biblePassage: formData.biblePassage,
-        author: { _type: 'reference', _ref: appUser.uid }
+        biblePassage: {
+          book: formData.biblePassage.book,
+          chapter: formData.biblePassage.chapter,
+          verseStart: formData.biblePassage.verseStart,
+          verseEnd: formData.biblePassage.verseEnd,
+          text: formData.biblePassage.text
+        },
+        authorRef: appUser.uid,
+        authorName: appUser.displayName,
+        authorEmail: appUser.email,
+        createdAt: new Date().toISOString(),
+        isFeatured: false
       });
+
       router.push(`/community/discussions/${result._id}`);
-    } catch (error) {
-      console.error('Submission error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to create discussion');
+    } catch (err: any) {
+      console.error('Error creating discussion:', err);
+      setError(err.message || 'Failed to create discussion');
     } finally {
       setIsSubmitting(false);
     }
   };
-
+//<TokenDebug/>
   return (
     <div className="max-w-2xl mx-auto p-4">
+      
       <h1 className="text-2xl font-bold mb-6">New Discussion</h1>
       
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title Input */}
-        <div>
-          <label className="block mb-2 font-medium">Discussion Title*</label>
-          <input
-            type="text"
-            value={formData.title}
-            onChange={(e) => setFormData({...formData, title: e.target.value})}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-
-        {/* Bible Passage Selector */}
+        {/* Bible Reference Selector */}
         <div className="space-y-2">
           <label className="block mb-2 font-medium">Bible Reference*</label>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {/* Book Selector */}
             <select
               value={selectedBook}
               onChange={(e) => {
@@ -136,7 +159,6 @@ export default function NewDiscussionPage() {
               ))}
             </select>
 
-            {/* Chapter Selector */}
             <select
               value={selectedChapter || ''}
               onChange={(e) => {
@@ -153,7 +175,6 @@ export default function NewDiscussionPage() {
               ))}
             </select>
 
-            {/* Verse Start */}
             <select
               value={selectedVerseStart || ''}
               onChange={(e) => {
@@ -169,7 +190,6 @@ export default function NewDiscussionPage() {
               ))}
             </select>
 
-            {/* Verse End */}
             <select
               value={selectedVerseEnd || ''}
               onChange={(e) => setSelectedVerseEnd(Number(e.target.value))}
@@ -202,8 +222,20 @@ export default function NewDiscussionPage() {
           )}
         </div>
 
-{/* Content Input */}
-<div>
+        {/* Discussion Title */}
+        <div>
+          <label className="block mb-2 font-medium">Discussion Title*</label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+
+        {/* Discussion Content */}
+        <div>
           <label className="block mb-2 font-medium">Details</label>
           <textarea
             value={formData.content}
@@ -213,6 +245,7 @@ export default function NewDiscussionPage() {
           />
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={isSubmitting || !formData.biblePassage.book}

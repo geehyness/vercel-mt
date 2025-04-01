@@ -29,6 +29,7 @@ export function Header() {
             >
               About
             </Link>
+            {/* Mobile menu button 
             <Link
               href="/community/discussions"
               className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100 transition-colors duration-200"
@@ -40,7 +41,7 @@ export function Header() {
               className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100 transition-colors duration-200"
             >
               Kids
-            </Link>
+            </Link>*/}
             <Link
               href="/contact"
               className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100 transition-colors duration-200"
@@ -69,7 +70,7 @@ export function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               About
-            </Link>
+            </Link>{/*
             <Link
               href="/community/discussions"
               className="block px-3 py-2 rounded-md text-base font-medium text-orange-800 dark:text-orange-200 hover:bg-orange-200 dark:hover:bg-orange-800"
@@ -83,7 +84,7 @@ export function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               Kids
-            </Link>
+            </Link>*/}
             <Link
               href="/contact"
               className="block px-3 py-2 rounded-md text-base font-medium text-orange-800 dark:text-orange-200 hover:bg-orange-200 dark:hover:bg-orange-800"
