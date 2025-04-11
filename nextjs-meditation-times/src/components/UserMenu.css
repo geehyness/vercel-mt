@@ -1,0 +1,298 @@
+/* ==========================================================================
+   User Menu Component Styles (No Tailwind)
+   ========================================================================== */
+
+/* --- Loading State --- */
+.user-menu-loading-skeleton {
+    width: 32px;
+    height: 32px;
+    background-color: #e0e0e0; /* Placeholder color */
+    border-radius: 50%;
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* --- Trigger Button (in Header) --- */
+.user-menu-trigger-button {
+    display: inline-flex; /* Align content */
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.08); /* Subtle light background on dark header */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle border */
+    border-radius: var(--radius-md); /* CURVED CORNERS */
+    padding: var(--space-xs);       /* Padding around the avatar/initials */
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    line-height: 0; /* Prevents extra space */
+  }
+  
+  .user-menu-trigger-button:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Slightly brighter on hover */
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+  
+  /* Add a visible focus state */
+  .user-menu-trigger-button:focus-visible {
+    outline: none; /* Remove default outline */
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 2px var(--dark), 0 0 0 4px var(--primary); /* Ring effect: inner dark, outer primary */
+  }
+  
+  /* --- Avatar/Initials within the Trigger Button --- */
+  .user-menu-avatar-trigger {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm); /* Slightly rounded corners for the image inside */
+    object-fit: cover;
+    display: block;
+    /* No separate border needed as the button provides it */
+  }
+  
+  .user-menu-initials-trigger {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm); /* Match avatar corner radius */
+    /* Keep gradient or use solid color if preferred */
+    background: linear-gradient(to bottom right, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem; /* Adjust size as needed */
+    font-weight: 500;
+    /* No separate border needed */
+  }
+  
+  /* --- Modal Overlay --- */
+  .user-menu-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65); /* Darker overlay */
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-md);
+    animation: fadeIn 0.2s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* --- Modal Container --- */
+.user-menu-modal {
+    /* ... existing styles ... */
+    max-width: 340px;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    animation: modalZoomIn 0.2s ease-out forwards;
+  
+    /* Add these for better handling of tall content */
+    max-height: calc(100vh - var(--space-xl) * 2); /* Max height = viewport height minus double the overlay padding */
+    overflow-y: auto; /* Allow the modal content *itself* to scroll if needed */
+  }
+  
+  @keyframes modalZoomIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  
+  /* --- Modal Header (Dark Section) --- */
+  .modal-header {
+    background-color: var(--dark);
+    color: white;
+    padding: var(--space-xl) var(--space-lg) var(--space-lg); /* More top padding */
+    text-align: center;
+    position: relative; /* For close button positioning */
+  }
+  
+  .modal-close-btn {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    background: transparent;
+    border: none;
+    color: var(--text-light); /* Lighter icon color on dark bg */
+    cursor: pointer;
+    padding: var(--space-xs);
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    line-height: 0; /* Prevent button taking extra height */
+  }
+  
+  .modal-close-btn:hover,
+  .modal-close-btn:focus-visible {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+  }
+  
+  .modal-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto var(--space-md);
+    display: block;
+    border: 3px solid white; /* White border around avatar */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+  }
+  
+  .modal-initials {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto var(--space-md);
+    background: linear-gradient(to bottom right, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-user-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 var(--space-xs);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 var(--space-sm); /* Prevent long names touching edges */
+  }
+  
+  .modal-user-email {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 var(--space-sm); /* Prevent long emails touching edges */
+    opacity: 0.8;
+  }
+  
+  /* --- Modal Body (White Card Section) --- */
+  .modal-body {
+    background-color: white; /* White card background */
+    padding: var(--space-md); /* Consistent padding */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs); /* Small gap between links/buttons */
+  }
+  
+  .modal-link,
+  .modal-signout-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border: none; /* Reset button border */
+    cursor: pointer;
+    text-align: left; /* Align text left */
+    background-color: transparent; /* Default background */
+  }
+  
+  .modal-link {
+    color: var(--text); /* Default text color */
+  }
+  
+  .modal-link:hover,
+  .modal-link:focus-visible {
+    background-color: #f0f0f0; /* Light grey hover */
+    color: var(--secondary); /* Blue text hover */
+    outline: none;
+  }
+  .modal-link:hover .modal-link-icon,
+  .modal-link:focus-visible .modal-link-icon {
+     color: var(--secondary); /* Change icon color on hover */
+  }
+  
+  
+  .modal-link-icon,
+  .modal-signout-icon {
+    margin-right: var(--space-md);
+    color: var(--text-light); /* Default icon color */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+    transition: color 0.2s ease;
+  }
+  
+  .modal-signout-section {
+     margin-top: var(--space-xs); /* Space above */
+     padding-top: var(--space-xs); /* Space above */
+     border-top: 1px solid var(--border-light); /* Separator line */
+  }
+  
+  .modal-signout-btn {
+    color: #dc3545; /* Red color */
+  }
+  
+  .modal-signout-btn:hover,
+  .modal-signout-btn:focus-visible {
+    background-color: rgba(220, 53, 69, 0.08); /* Light red background hover */
+    color: #a71d2a; /* Darker red text hover */
+    outline: none;
+  }
+  .modal-signout-btn:hover .modal-signout-icon,
+  .modal-signout-btn:focus-visible .modal-signout-icon {
+     color: #a71d2a; /* Darker red icon hover */
+  }
+  
+  .modal-signout-icon {
+      color: #dc3545; /* Default red icon */
+  }
+  
+  
+  /* --- Sign In Button (Fallback) --- */
+  .user-menu-signin-button {
+    /* Style this like your primary action buttons */
+    /* Example using variables - adjust as needed */
+    display: inline-block;
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: white;
+    background: linear-gradient(to right, var(--primary), var(--secondary)); /* Example Gradient */
+    border: none;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .user-menu-signin-button:hover,
+  .user-menu-signin-button:focus-visible {
+    opacity: 0.9; /* Simple hover effect */
+    box-shadow: var(--shadow-md);
+    outline: none;
+  }

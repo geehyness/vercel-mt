@@ -1,0 +1,1656 @@
+/* ==========================================================================
+   Global Styles & CSS Variables
+   ========================================================================== */
+
+   :root {
+    /* Colors */
+    --dark: #222222;         /* Dark background color */
+    --light: #f8f9fa;        /* Light background/element color */
+    --text: #2c3e50;         /* Default text color on light backgrounds */
+    --text-light: #999999;   /* Lighter text, often for meta or on dark backgrounds */
+    --border-color: #444444; /* Dark border color */
+    --border-light: #e0e0e0; /* Light border color */
+    --primary: #4dd0e1;      /* Primary accent color (teal) */
+    --secondary: #3498db;    /* Secondary accent color (blue) */
+    --accent: #2980b9;       /* Accent color, often for hover states (darker blue) */
+    
+    /* Colors - RGB equivalents for box-shadows/rgba() */
+    --secondary-rgb: 52, 152, 219; /* RGB for #3498db */
+  
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-xxl: 3rem;
+  
+    /* Borders & Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+  
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+    --header-height: 100px;
+  }
+  
+  .main-content {
+    padding-top: var(--header-height); /* Adds space below the fixed header */
+    flex-grow: 1; /* Ensures main content fills available vertical space */
+    /* Add width constraints or page centering if needed here or in nested containers */
+    /* e.g., max-width: 1200px; margin: 0 auto; */
+  }
+  
+
+  /* Base Styles */
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff; /* Default light background for the page */
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+
+
+html {
+  height: 100%; /* Ensure html fills height */
+}
+
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-xl); /* Consistent padding */
+    flex-grow: 1; /* Ensure container grows to push footer down */
+    padding-top: 80px; /* Add padding to prevent content from hiding under fixed header, adjust value as needed */
+  }
+  
+  /* General Link Style */
+  .link {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  /* ==========================================================================
+     Header Component (Dark Theme)
+     ========================================================================== */
+  
+  .website-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Dark Mode Background */
+    background-color: rgba(34, 34, 34, 0.9); /* --dark with 90% opacity */
+    backdrop-filter: blur(10px);
+    /* Dark Mode Border */
+    border-bottom: 1px solid var(--border-color);
+    z-index: 50;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  /* Navigation Container */
+  .header-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-md);
+  }
+  
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Logo */
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .logo-link {
+    text-decoration: none;
+    color: transparent;
+    background-clip: text;
+    background-image: linear-gradient(to right, #008080, #4169e1); /* Teal to Blue */
+  }
+  
+  /* Desktop Navigation */
+  .desktop-nav {
+    display: none; /* Hidden by default */
+  }
+  
+  .nav-link {
+    color: #cccccc; /* Light grey text on dark header */
+    transition: color 0.2s ease;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  
+  .nav-link:hover {
+    color: var(--primary); /* Teal hover */
+  }
+  
+  /* Mobile Menu Button */
+  .mobile-menu-button {
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    color: #cccccc; /* Light grey icon/text */
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: block; /* Visible on mobile */
+  }
+  
+  .mobile-menu-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle light overlay on hover */
+  }
+  
+  .menu-icon {
+    width: 24px;
+    height: 24px;
+    stroke: #cccccc; /* Light grey icon */
+  }
+  
+  .mobile-menu-button:hover .menu-icon {
+    stroke: var(--primary); /* Teal icon hover */
+  }
+  
+  /* Mobile Menu (Appears when toggled) */
+  .mobile-menu {
+    /* position: absolute; /* Optional: If it slides down */
+    /* top: 100%; /* Optional: Position below header */
+    /* left: 0; */
+    /* width: 100%; */
+    /* background-color: var(--dark); /* Match header background */
+    /* box-shadow: var(--shadow-md); */
+    /* border-top: 1px solid var(--border-color); */
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-sm);
+    display: flex; /* Should be toggled via JS/React state */
+    flex-direction: column;
+    gap: var(--space-sm);
+    /* z-index: 40; /* Below header but above content */
+  }
+  
+  .mobile-nav-link {
+    display: block;
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #cccccc; /* Light grey text */
+  }
+  
+  .mobile-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle light overlay */
+  }
+  
+  .mobile-user-menu-container {
+    padding: var(--space-xs) var(--space-md);
+    /* border-top: 1px solid var(--border-color); /* Optional separator */
+    /* margin-top: var(--space-sm); */
+  }
+  
+  /* Header Responsive */
+  @media (min-width: 768px) { /* md breakpoint */
+    .mobile-menu-button {
+      display: none; /* Hide hamburger */
+    }
+    .desktop-nav {
+      display: flex; /* Show desktop links */
+      align-items: center;
+      gap: var(--space-xl);
+    }
+    .mobile-menu {
+        display: none; /* Ensure mobile menu is hidden on desktop */
+    }
+  }
+  
+  @media (min-width: 640px) { /* sm breakpoint */
+    .header-nav {
+      padding-left: var(--space-md);
+      padding-right: var(--space-md);
+    }
+  }
+  
+  @media (min-width: 1024px) { /* lg breakpoint */
+    .header-nav {
+      padding-left: var(--space-lg);
+      padding-right: var(--space-lg);
+    }
+  }
+  
+  /* ==========================================================================
+     Footer Component
+     ========================================================================== */
+  
+  .website-footer {
+    background-color: var(--dark);
+    color: var(--text-light);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto; /* Pushes footer to bottom if content is short */
+  }
+  
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-xxl) var(--space-md);
+  }
+  
+  .footer-content {
+    display: grid;
+    gap: var(--space-xl);
+    /* Consider grid layout for columns if needed later */
+  }
+  
+  .footer-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .footer-logo {
+    font-size: 2rem;
+    margin-bottom: var(--space-lg);
+    /* Re-apply logo gradient if needed, assuming .logo-link style isn't inherited */
+    /* Example: color: transparent; background-clip: text; background-image: ...; */
+  }
+  .footer-logo .logo-link { /* Target the link specifically */
+     text-decoration: none;
+     color: transparent;
+     background-clip: text;
+     background-image: linear-gradient(to right, #008080, #4169e1);
+  }
+  
+  .footer-verse {
+    max-width: 800px;
+    margin: 0 auto var(--space-xl);
+  }
+  
+  .verse-heading {
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: var(--space-sm);
+    font-weight: 500;
+  }
+  
+  .verse-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    opacity: 0.9;
+  }
+  
+  .footer-social {
+    display: flex;
+    gap: var(--space-lg);
+    margin-top: var(--space-md);
+  }
+  
+  .social-link {
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    padding: var(--space-xs);
+  }
+  
+  .social-link:hover {
+    color: var(--primary);
+    transform: translateY(-2px);
+  }
+  
+  .social-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Newsletter Section (within Footer) */
+  .newsletter-section { /* Assuming a wrapper div */
+    /* Add margin/padding if needed */
+  }
+  
+  .newsletter-heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: white; /* Assuming white text on dark footer */
+    margin-bottom: var(--space-md);
+  }
+  
+  .newsletter-description {
+    color: var(--text-light); /* Use text-light for consistency */
+    margin-bottom: var(--space-md);
+  }
+  
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: 400px; /* Limit width */
+    margin: 0 auto; /* Center if needed */
+  }
+  
+  .newsletter-input {
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid #666666; /* Slightly lighter than border-color */
+    background-color: #333333; /* Slightly lighter than dark bg */
+    color: white;
+    outline: none;
+  }
+  
+  .newsletter-input:focus {
+    border-color: var(--primary); /* Teal focus */
+    box-shadow: 0 0 0 2px rgba(77, 208, 225, 0.25); /* Teal ring */
+  }
+  
+  .newsletter-button {
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-sm);
+    background-color: var(--secondary); /* Blue button */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .newsletter-button:hover {
+    background-color: var(--accent); /* Darker blue hover */
+  }
+  
+  /* Footer Bottom Section */
+  .footer-bottom {
+    border-top: 1px solid var(--border-color);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+  }
+  
+  .copyright {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    opacity: 0.8;
+    /* Note: Duplicate .copyright exists below, ensure this one is used */
+  }
+  
+  .legal-links {
+    display: flex;
+    gap: var(--space-sm);
+    justify-content: center;
+    margin-top: var(--space-md);
+  }
+  
+  .legal-link {
+    color: var(--text-light);
+    transition: color 0.3s ease;
+    text-decoration: none;
+  }
+  
+  .legal-link:hover {
+    color: var(--primary); /* Teal hover */
+  }
+  
+  .divider {
+    color: var(--text-light);
+    opacity: 0.5;
+  }
+  
+  /* Footer Responsive */
+  @media (max-width: 768px) {
+    .footer-container {
+      padding: var(--space-xl) var(--space-md);
+    }
+    .footer-logo {
+      font-size: 1.75rem;
+    }
+    .verse-text {
+      font-size: 0.95rem;
+    }
+    .legal-links {
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .divider {
+      display: none;
+    }
+    .newsletter-form {
+       max-width: none; /* Allow full width on mobile */
+    }
+  }
+  
+  
+  /* ==========================================================================
+     Dashboard / Index Page Styles
+     ========================================================================== */
+  
+  .dashboard-header {
+    margin-bottom: var(--space-xxl);
+    text-align: center;
+  }
+  
+  .page-title {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+    color: var(--primary); /* Teal title */
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Underline for Page Title */
+  .page-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--secondary); /* Blue underline */
+    margin: var(--space-md) auto 0;
+  }
+  
+  /* Year Message Box */
+  .year-message-container {
+    text-align: center;
+    margin-bottom: var(--space-xxl);
+    padding: var(--space-lg);
+    background-color: var(--light); /* Light background box */
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+  }
+  
+  .year-heading {
+    font-size: 2rem;
+    color: var(--primary); /* Teal year */
+    margin-bottom: var(--space-sm);
+  }
+  
+  .section-divider {
+    border: none;
+    border-top: 2px solid var(--border-light);
+    margin: var(--space-md) auto;
+    width: 80px;
+  }
+  
+  .year-theme-heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--dark); /* Dark heading */
+    margin-bottom: var(--space-sm);
+  }
+  
+  .year-theme-text {
+    color: var(--text-light); /* Lighter text for verse */
+    margin-bottom: var(--space-lg);
+    line-height: 1.7;
+  }
+  
+  /* Latest Meditation Box */
+  .latest-meditation-container {
+    margin-top: var(--space-xl);
+  }
+  
+  .latest-meditation-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary); /* Teal title */
+    margin-bottom: var(--space-md);
+  }
+  
+  .latest-meditation-link {
+    display: block;
+    text-decoration: none;
+    color: var(--text); /* Use default text color */
+  }
+  
+  .latest-meditation-card {
+    background: white; /* Use white background */
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    color: var(--text); /* Default text color */
+    margin-bottom: var(--space-sm);
+    border: 1px solid var(--border-light);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .latest-meditation-link:hover .latest-meditation-card {
+    /* text-decoration: underline; Combine hover effects */
+     transform: translateY(-2px);
+     box-shadow: var(--shadow-md);
+  }
+  
+  .latest-meditation-card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--secondary); /* Blue title inside card */
+    margin-bottom: var(--space-xs);
+  }
+  
+  .latest-meditation-card-excerpt {
+    margin-top: var(--space-xs);
+    line-height: 1.5;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    color: var(--text); /* Ensure text color */
+  }
+  
+  .latest-meditation-meta {
+    font-size: 0.8rem;
+    color: var(--text-light); /* Lighter meta text */
+    margin-top: var(--space-sm);
+  }
+  
+  /* Year Select Dropdown */
+  .year-select-container {
+    margin-top: var(--space-lg);
+    text-align: center;
+  }
+  
+  .year-select-label {
+    margin-right: var(--space-sm);
+    font-weight: 500;
+    color: var(--text-light);
+  }
+  
+  .year-select-dropdown {
+    background-color: white;
+    border: 1px solid #ccc; /* Slightly darker border than container */
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.9rem;
+    color: var(--text);
+    cursor: pointer;
+  }
+  
+  /* Year Filter Buttons */
+  .year-filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+  
+  .filter-label {
+    font-weight: 500;
+    color: var(--text-light);
+    margin-right: var(--space-sm);
+  }
+  
+  .filter-option {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-md); /* Make slightly more rounded? */
+    background: var(--light);
+    color: var(--text);
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-light);
+    text-decoration: none;
+  }
+  
+  .filter-option:hover {
+    background: var(--secondary); /* Blue hover */
+    color: white;
+    border-color: var(--secondary);
+  }
+  
+  .filter-option.active {
+    background: var(--secondary); /* Blue active */
+    color: white;
+    font-weight: 500;
+    border-color: var(--secondary);
+  }
+  
+  /* Dashboard Responsive */
+  @media (max-width: 768px) {
+    .year-message-container {
+      padding: var(--space-md);
+      margin-bottom: var(--space-xl);
+    }
+    .year-heading {
+      font-size: 1.75rem;
+    }
+    .year-theme-heading {
+      font-size: 1.3rem;
+    }
+    .latest-meditation-title {
+      font-size: 1.1rem;
+    }
+     .year-filter {
+      justify-content: flex-start; /* Align left on mobile */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-title {
+      font-size: 2rem;
+    }
+  }
+  
+/* ==========================================================================
+   Posts Timeline / Post Card Styles
+   ========================================================================== */
+
+   .posts-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .post-card {
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    position: relative;
+  }
+  
+  .post-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .post-week-indicator {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--dark);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 2;
+  }
+  
+  .post-content-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  
+  .post-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: var(--light);
+  }
+  
+  .post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+  
+  .post-card:hover .post-image {
+    transform: scale(1.03);
+  }
+  
+  .post-details {
+    padding: var(--space-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  
+  .post-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .post-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    color: var(--dark);
+    margin: 0;
+  }
+  
+  .post-link:hover .post-title {
+    color: var(--secondary);
+  }
+  
+  .post-meta {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  
+  .post-author {
+    font-weight: 500;
+  }
+  
+  .post-excerpt {
+    color: var(--text);
+    line-height: 1.6;
+    margin: var(--space-sm) 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .post-categories {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+  
+  .post-category {
+    background: var(--light);
+    color: var(--text);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+  }
+  
+  .post-category:hover {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+  }
+  
+  @media (min-width: 768px) {
+    .post-content-container {
+      flex-direction: row;
+      gap: var(--space-lg);
+    }
+  
+    .post-image-wrapper {
+      width: 45%;
+      aspect-ratio: 4/3;
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+    }
+  
+    .post-image {
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+    }
+  
+    .post-details {
+      width: 55%;
+      padding: var(--space-xl);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .post-week-indicator {
+      font-size: 0.7rem;
+      padding: var(--space-xs);
+    }
+  
+    .post-details {
+      padding: var(--space-md);
+    }
+  
+    .post-title {
+      font-size: 1.3rem;
+    }
+  }
+  
+  /* Image-less Post Variation */
+  .post-card:not(:has(.post-image)) .post-details {
+    width: 100%;
+  }
+    
+  /* ==========================================================================
+     Single Post Page Styles
+     ========================================================================== */
+  
+  .post-container {
+    max-width: 900px; /* Same width as timeline */
+    margin: var(--space-xxl) auto;
+    padding: 0 var(--space-md);
+  }
+  
+  /* Style for back/filter button on single post page */
+  .post-container .filter-option {
+    margin-bottom: var(--space-lg);
+    display: inline-block;
+  }
+  
+  .full-post {
+     /* Container for the single post content */
+     /* Can inherit styles from .post-card if wrapped, or style independently */
+     background-color: white;
+     padding: var(--space-xl);
+     border-radius: var(--radius-md);
+     box-shadow: var(--shadow-sm);
+     border: 1px solid var(--border-light);
+  }
+  
+  .full-post .post-header {
+    margin-bottom: var(--space-xl);
+    text-align: center;
+    border-bottom: 1px solid var(--border-light); /* Optional separator */
+    padding-bottom: var(--space-lg);
+  }
+  
+  .full-post .post-title {
+    font-size: 2.2rem; /* Larger title */
+    margin-bottom: var(--space-sm);
+    color: var(--dark);
+    line-height: 1.2;
+  }
+  
+  .full-post .post-meta {
+    justify-content: center; /* Center meta info */
+    margin-bottom: 0; /* Remove bottom margin as header has padding */
+  }
+  
+  .full-post .post-image-wrapper {
+    width: 100%;
+    height: auto; /* Auto height */
+    max-height: 400px; /* Optional max height */
+    overflow: hidden;
+    margin-bottom: var(--space-xl);
+    border-radius: var(--radius-md); /* Rounded corners for image */
+  }
+  
+  .full-post .post-image {
+     /* Styles inherited */
+  }
+  
+  .full-post .post-body {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    line-height: 1.8;
+    font-size: 1.1rem; /* Slightly larger body font */
+    color: var(--text);
+  }
+  
+  /* Spacing between elements in the post body */
+  .full-post .post-body > *:not(:last-child) {
+    margin-bottom: var(--space-lg);
+  }
+  .full-post .post-body h2,
+  .full-post .post-body h3,
+  .full-post .post-body h4 {
+      color: var(--dark);
+      margin-top: var(--space-xl);
+  }
+  .full-post .post-body p {
+      color: var(--text);
+  }
+  .full-post .post-body ul,
+  .full-post .post-body ol {
+      padding-left: var(--space-lg);
+  }
+  .full-post .post-body blockquote {
+      border-left: 4px solid var(--primary);
+      padding-left: var(--space-md);
+      margin-left: 0;
+      font-style: italic;
+      color: var(--text-light);
+  }
+  
+  .full-post .post-categories {
+    margin-top: var(--space-xl);
+    justify-content: center; /* Center categories */
+    border-top: 1px solid var(--border-light); /* Optional separator */
+    padding-top: var(--space-lg);
+  }
+  
+  /* Single Post Responsive */
+  @media (max-width: 768px) {
+    .post-container {
+      margin-top: var(--space-xl); /* Less top margin */
+      padding: 0 var(--space-sm); /* Less horizontal padding */
+    }
+    .full-post {
+        padding: var(--space-lg); /* Less padding */
+    }
+    .full-post .post-header {
+      text-align: left; /* Align left on mobile */
+      padding-bottom: var(--space-md);
+    }
+    .full-post .post-title {
+      font-size: 1.8rem; /* Adjust title size */
+    }
+    .full-post .post-meta {
+      justify-content: flex-start; /* Align left */
+    }
+    .full-post .post-categories {
+      justify-content: flex-start; /* Align left */
+      padding-top: var(--space-md);
+    }
+    .full-post .post-body {
+        font-size: 1rem; /* Adjust body font size */
+    }
+  }
+  
+  /* ==========================================================================
+     Contact Page Form Styles
+     ========================================================================== */
+  
+  .form-container {
+    background-color: var(--light); /* Light background for form */
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-xl); /* Generous padding */
+    border: 1px solid var(--border-light);
+    max-width: 700px; /* Limit form width */
+    margin: var(--space-xl) auto; /* Center the form */
+  }
+  
+  .form-success-message,
+  .form-error-message {
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+  }
+  
+  .form-success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .form-error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .form-grid {
+    display: grid;
+    gap: var(--space-lg); /* More gap in form */
+  }
+  
+  .form-label {
+    display: block;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: var(--space-xs);
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: var(--space-sm);
+    border: 1px solid #ccc; /* Standard border */
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    color: var(--text);
+    background-color: white; /* White input background */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box; /* Ensure padding doesn't increase size */
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: var(--secondary); /* Blue focus border */
+    box-shadow: 0 0 0 3px rgba(var(--secondary-rgb), 0.25); /* Blue focus ring */
+  }
+  
+  textarea.form-input {
+    min-height: 120px; /* Taller textarea */
+    resize: vertical; /* Allow vertical resize */
+  }
+  
+  .form-error-text {
+    margin-top: var(--space-xs);
+    font-size: 0.875rem;
+    color: #dc3545; /* Standard Bootstrap danger color */
+  }
+  
+  .form-button-primary {
+    width: 100%;
+    background-color: var(--secondary); /* Blue submit button */
+    color: white;
+    padding: var(--space-md) var(--space-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .form-button-primary:hover {
+    background-color: var(--accent); /* Darker blue hover */
+  }
+  
+  .form-button-primary:disabled {
+    background-color: #cccccc; /* Grey disabled state */
+    cursor: not-allowed;
+  }
+  
+  /* Form Responsive */
+  @media (min-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr 1fr; /* Two columns on desktop */
+      gap: var(--space-xl); /* Wider gap on desktop */
+    }
+    /* Make specific fields span both columns if needed */
+    /* Example: Select the div containing the textarea */
+     .form-grid > div:has(textarea) { /* Modern CSS selector */
+       grid-column: 1 / -1;
+     }
+     /* Fallback or specific class if :has() isn't supported enough */
+     /* .form-grid .message-field-wrapper { grid-column: 1 / -1; } */
+  
+    .form-grid > button { /* Make button span too */
+      grid-column: 1 / -1;
+      max-width: 200px; /* Optionally limit button width */
+      margin: 0 auto; /* Center the button */
+    }
+  }
+
+
+
+
+
+  /* === ADD THESE STYLES TO YOUR style.css === */
+
+/* --- :root Variables --- */
+:root {
+  /* Colors */
+  --primary-hue: 205; /* Sky */
+  --secondary-hue: 250; /* Purple/Indigo */
+  --success-hue: 145; /* Green */
+  --warning-hue: 40;  /* Amber */
+  --danger-hue: 0;    /* Red */
+
+  --primary-color: hsl(var(--primary-hue), 70%, 55%);
+  --primary-color-dark: hsl(var(--primary-hue), 70%, 45%);
+  --secondary-color: hsl(var(--secondary-hue), 60%, 60%);
+  --secondary-color-dark: hsl(var(--secondary-hue), 60%, 50%);
+  --success-color: hsl(var(--success-hue), 60%, 45%);
+  --success-color-dark: hsl(var(--success-hue), 60%, 35%);
+  --danger-color: hsl(var(--danger-hue), 70%, 55%);
+  --danger-color-dark: hsl(var(--danger-hue), 70%, 45%);
+  --warning-color: hsl(var(--warning-hue), 80%, 55%);
+
+  --text-primary: #1e293b;    /* slate-900 */
+  --text-secondary: #475569;  /* slate-600 */
+  --text-muted: #94a3b8;      /* slate-400 */
+  --text-on-primary: #ffffff;
+  --text-on-danger: #ffffff;
+
+  --bg-card: #ffffff;
+  --bg-header: linear-gradient(135deg, hsl(var(--primary-hue), 100%, 97%), hsl(var(--secondary-hue), 100%, 97%));
+  --bg-placeholder: linear-gradient(135deg, hsl(var(--success-hue), 100%, 97%), hsl(180, 50%, 96%)); /* Green/Teal */
+  --bg-body: #f8fafc; /* slate-50 */
+
+  --border-light: #e2e8f0; /* slate-200 */
+  --border-medium: #cbd5e1; /* slate-300 */
+
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Spacing */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem;  /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem;    /* 16px */
+  --space-5: 1.25rem; /* 20px */
+  --space-6: 1.5rem;  /* 24px */
+  --space-8: 2rem;    /* 32px */
+  --space-10: 2.5rem; /* 40px */
+  --space-12: 3rem;   /* 48px */
+
+  /* Borders & Shadows */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Optional: Base body styles if not already present in style.css */
+body {
+font-family: var(--font-sans);
+background-color: var(--bg-body);
+color: var(--text-secondary);
+margin: 0; /* Reset default margin */
+}
+
+/* --- General Profile Page Styles --- */
+
+.profile-container {
+max-width: 56rem; /* equiv ~max-w-4xl */
+margin: var(--space-12) auto;
+padding: var(--space-4);
+}
+
+@media (min-width: 768px) {
+.profile-container {
+  padding: var(--space-6);
+}
+}
+
+.profile-card {
+background-color: var(--bg-card);
+border-radius: var(--radius-xl);
+box-shadow: var(--shadow-xl);
+border: 1px solid var(--border-light);
+overflow: hidden;
+}
+
+/* --- Header --- */
+.profile-header {
+padding: var(--space-8);
+background-image: var(--bg-header);
+border-bottom: 1px solid var(--border-light);
+display: flex;
+flex-direction: column; /* Mobile first */
+align-items: center;
+gap: var(--space-6);
+}
+
+.profile-avatar-wrapper {
+  flex-shrink: 0;
+  position: relative;
+  border-radius: var(--radius-full);
+  outline: 4px solid var(--bg-card);
+  outline-offset: -1px;
+  box-shadow: var(--shadow-md);
+}
+
+.profile-info {
+flex-grow: 1;
+text-align: center;
+}
+
+.user-name {
+font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: var(--text-primary);
+}
+@media (min-width: 768px) { .user-name { font-size: 2.25rem; line-height: 2.5rem; } }
+
+.user-email { margin-top: var(--space-1); font-size: 1.125rem; color: var(--text-secondary); }
+
+.badge-container { margin-top: var(--space-4); display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); }
+.badge { display: inline-flex; align-items: center; padding: 0.3rem var(--space-3); font-size: 0.75rem; font-weight: 600; border-radius: var(--radius-full); box-shadow: var(--shadow-sm); }
+.badge-role { background-color: hsl(var(--primary-hue), 100%, 95%); color: hsl(var(--primary-hue), 80%, 35%); }
+.badge-version { background-color: hsl(var(--secondary-hue), 100%, 95%); color: hsl(var(--secondary-hue), 80%, 35%); }
+
+@media (min-width: 640px) {
+.profile-header { flex-direction: row; align-items: center; gap: var(--space-8); }
+.profile-info { text-align: left; }
+.badge-container { justify-content: flex-start; }
+}
+
+/* --- Details Section --- */
+.profile-details { padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-8); }
+.detail-section { border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: var(--space-6); }
+.detail-title-area { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+.detail-icon { width: 1.5rem; height: 1.5rem; flex-shrink: 0; }
+.detail-icon-testimony { color: var(--primary-color); }
+.detail-icon-prayer { color: var(--secondary-color); }
+.detail-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+.detail-content { color: var(--text-secondary); line-height: 1.65; white-space: pre-line; max-width: none; }
+.detail-content p:not(:last-child) { margin-bottom: 1em; }
+.detail-content strong { color: var(--text-primary); font-weight: 600; }
+
+/* --- Placeholder Section --- */
+.placeholder-section { padding: var(--space-8); background-image: var(--bg-placeholder); border-radius: var(--radius-lg); border: 1px solid hsl(var(--success-hue), 50%, 90%); text-align: center; }
+.placeholder-icon { width: 3rem; height: 3rem; color: var(--success-color); margin: 0 auto var(--space-4) auto; }
+.placeholder-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-2); }
+.placeholder-text { color: var(--text-secondary); margin-bottom: var(--space-4); }
+
+/* --- Actions Section --- */
+.profile-actions { padding: var(--space-6); margin-top: var(--space-8); border-top: 1px solid var(--border-light); display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+.action-button { display: inline-flex; align-items: center; justify-content: center; padding: var(--space-2) var(--space-5); border-radius: var(--radius-md); font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; text-decoration: none; box-shadow: var(--shadow-sm); transition: all 0.15s ease-in-out; white-space: nowrap; }
+.action-button:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.action-button:focus-visible { outline: 2px solid transparent; outline-offset: 2px; box-shadow: 0 0 0 3px hsla(var(--primary-hue), 70%, 70%, 0.5); }
+.action-button .button-icon { width: 1rem; height: 1rem; margin-right: var(--space-2); }
+
+/* Specific Button Colors */
+.button-edit { background-color: var(--primary-color); color: var(--text-on-primary); }
+.button-edit:hover { background-color: var(--primary-color-dark); }
+.button-meditations { background-color: var(--success-color); color: var(--text-on-primary); }
+.button-meditations:hover { background-color: var(--success-color-dark); }
+.button-prayer { background-color: var(--secondary-color); color: var(--text-on-primary); }
+.button-prayer:hover { background-color: var(--secondary-color-dark); }
+.button-signout { background-color: var(--danger-color); color: var(--text-on-danger); }
+.button-signout:hover { background-color: var(--danger-color-dark); }
+.button-placeholder { background-color: var(--success-color); color: var(--text-on-primary); }
+.button-placeholder:hover { background-color: var(--success-color-dark); }
+.button-signin { background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color)); color: var(--text-on-primary); }
+.button-signin:hover { filter: brightness(1.1); box-shadow: var(--shadow-lg); }
+.button-refresh { background-color: var(--primary-color); color: var(--text-on-primary); }
+.button-refresh:hover { background-color: var(--primary-color-dark); }
+
+.button-signout { margin-left: 0; }
+@media (min-width: 640px) { .button-signout { margin-left: auto; } }
+
+/* --- State Containers (Loading, Error, etc.) --- */
+.state-container { max-width: 36rem; margin: var(--space-12) auto; padding: var(--space-8); background-color: var(--bg-card); box-shadow: var(--shadow-xl); border-radius: var(--radius-xl); text-align: center; border: 1px solid var(--border-light); }
+.state-icon { width: 4rem; height: 4rem; margin: 0 auto var(--space-5) auto; }
+.state-title { font-size: 1.875rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-3); }
+.state-message { margin-bottom: var(--space-8); color: var(--text-secondary); line-height: 1.65; }
+.state-message-emphasis { background-color: hsla(var(--danger-hue), 100%, 95%, 0.5); color: hsl(var(--danger-hue), 70%, 40%); padding: var(--space-4); border-radius: var(--radius-md); display: inline-block; }
+.loading-state .state-icon { color: var(--primary-color); animation: spin 1.5s linear infinite; }
+.error-state .state-icon { color: var(--danger-color); }
+.notfound-state .state-icon { color: var(--warning-color); }
+.signin-state .state-icon { color: var(--primary-color); }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.state-actions { display: flex; justify-content: center; gap: var(--space-4); }
+
+/* --- Inline Edit Styles --- */
+.edit-section-button { background: none; border: none; padding: var(--space-1) var(--space-2); margin: 0; color: var(--primary-color); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-1); font-size: 0.875rem; font-weight: 500; border-radius: var(--radius-md); transition: background-color 0.15s, color 0.15s; }
+.edit-section-button:hover { background-color: hsl(var(--primary-hue), 100%, 96%); color: var(--primary-color-dark); }
+.edit-section-button .button-icon { width: 0.9rem; height: 0.9rem; }
+.edit-prayer-form { display: flex; flex-direction: column; gap: var(--space-4); }
+.edit-prayer-textarea { width: 100%; padding: var(--space-3); border: 1px solid var(--border-medium); border-radius: var(--radius-md); font-size: 0.95rem; line-height: 1.6; color: var(--text-secondary); transition: border-color 0.2s, box-shadow 0.2s; min-height: 120px; }
+.edit-prayer-textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px hsla(var(--primary-hue), 70%, 70%, 0.5); }
+.edit-prayer-textarea:disabled { background-color: #f1f5f9; cursor: not-allowed; }
+.edit-prayer-actions { display: flex; gap: var(--space-3); align-items: center; }
+.button-save-prayer, .button-cancel-edit { padding: var(--space-2) var(--space-4); }
+.button-save-prayer { background-color: var(--success-color); color: var(--text-on-primary); min-width: 100px; }
+.button-save-prayer:hover { background-color: var(--success-color-dark); }
+.button-save-prayer:disabled { background-color: var(--success-color); opacity: 0.7; cursor: not-allowed; }
+.button-save-prayer:disabled:hover { background-color: var(--success-color); transform: none; box-shadow: var(--shadow-sm); }
+.button-cancel-edit { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-medium); }
+.button-cancel-edit:hover { background-color: #f1f5f9; border-color: var(--border-medium); box-shadow: var(--shadow-sm); transform: none; }
+.button-cancel-edit:disabled { opacity: 0.7; cursor: not-allowed; }
+.edit-prayer-success-message, .edit-prayer-error-message { display: flex; align-items: center; padding: var(--space-2) var(--space-3); margin-top: var(--space-2); border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 500; }
+.edit-prayer-success-message { background-color: hsl(var(--success-hue), 100%, 95%); color: hsl(var(--success-hue), 70%, 35%); border: 1px solid hsl(var(--success-hue), 50%, 85%); }
+.edit-prayer-error-message { background-color: hsl(var(--danger-hue), 100%, 96%); color: hsl(var(--danger-hue), 70%, 45%); border: 1px solid hsl(var(--danger-hue), 50%, 88%); }
+
+/* === END OF PROFILE PAGE STYLES === */
+
+
+/* === ADD THESE STYLES TO YOUR style.css === */
+
+/* --- Edit Profile Page Specific Styles --- */
+
+.edit-profile-container {
+  max-width: 48rem; /* equiv ~max-w-2xl, adjust as needed */
+  margin: var(--space-12) auto;
+  padding: var(--space-4);
+}
+
+/* Reuse profile-card style for consistency */
+.edit-profile-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg); /* Slightly less shadow than profile display */
+  border: 1px solid var(--border-light);
+  padding: var(--space-8);
+}
+
+.edit-profile-title {
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-8);
+  text-align: center;
+}
+
+.edit-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); /* Space between form sections */
+}
+
+/* --- Avatar Section --- */
+.avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--border-light);
+}
+/* Reuse profile-avatar-wrapper style if needed or adjust */
+.avatar-section .profile-avatar-wrapper {
+     outline-color: var(--bg-body); /* Adjust ring color for context */
+}
+
+.change-avatar-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem; /* text-sm */
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.15s;
+}
+.change-avatar-button:hover {
+    color: var(--primary-color-dark);
+}
+.change-avatar-button:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+}
+
+
+/* --- General Form Elements --- */
+.form-section {
+  /* Optional wrapper for label + input */
+}
+
+.form-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+  color: var(--text-primary); /* Darker label text */
+  font-size: 0.95rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg); /* Consistent rounding */
+  font-size: 1rem;
+  color: var(--text-secondary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box; /* Include padding/border in width */
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px hsla(var(--primary-hue), 70%, 70%, 0.5);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* Specific height/style for textareas */
+.form-textarea {
+  min-height: 120px;
+  line-height: 1.6;
+  resize: vertical; /* Allow vertical resizing */
+}
+.form-textarea-short { /* For prayer requests */
+    min-height: 100px;
+}
+
+
+/* Select dropdown arrow styling */
+.form-select {
+  appearance: none; /* Remove default arrow */
+  background-color: var(--bg-card); /* Ensure background color */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill="%236b7280" /></svg>'); /* SVG arrow, color adjusted */
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  background-size: 1.25em 1.25em;
+  padding-right: var(--space-8); /* Make space for arrow */
+}
+
+
+/* --- Form Actions (Save/Cancel) --- */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-light);
+    margin-top: var(--space-8); /* Space above actions */
+}
+
+/* Reuse action-button base styles */
+.button-save-changes {
+  /* Specific colors for save button */
+  background-color: var(--primary-color);
+  color: var(--text-on-primary);
+  min-width: 150px; /* Space for text/spinner */
+}
+.button-save-changes:hover {
+  background-color: var(--primary-color-dark);
+}
+.button-save-changes:disabled {
+  background-color: var(--primary-color);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.button-save-changes:disabled:hover {
+    background-color: var(--primary-color); /* Prevent hover change when disabled */
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+
+.button-cancel-form {
+   /* Specific colors/styles for cancel button */
+   background-color: transparent;
+   color: var(--text-secondary);
+   border: 1px solid var(--border-medium);
+}
+.button-cancel-form:hover {
+   background-color: #f1f5f9; /* slate-100 */
+   border-color: var(--border-medium);
+   box-shadow: var(--shadow-sm);
+   transform: none;
+}
+.button-cancel-form:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* General Loading/Error states can reuse .state-container styles */
+/* Add specific container class if needed */
+.edit-profile-loading-container,
+.edit-profile-error-container {
+     /* Adjust styles from .state-container if needed, e.g., less margin */
+     max-width: 36rem; margin: var(--space-8) auto; padding: var(--space-8);
+     background-color: var(--bg-card); box-shadow: var(--shadow-lg);
+     border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border-light);
+}
+.edit-profile-error-container { border-color: hsl(var(--danger-hue), 50%, 88%); }
+.edit-profile-loading-container .state-icon { color: var(--primary-color); } /* Use state-icon class */
+
+/* Error message display within the form */
+.form-error-message {
+    background-color: hsla(var(--danger-hue), 100%, 96%);
+    color: hsl(var(--danger-hue), 70%, 45%);
+    border: 1px solid hsl(var(--danger-hue), 50%, 88%);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    margin-top: var(--space-6); /* Space above error */
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.discussion-page {
+  background-color: #f7f7f7;
+  color: #333;
+  font-family: sans-serif;
+  padding-bottom: 2rem;
+}
+
+.discussion-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.back-link-container {
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #0056b3;
+}
+
+.back-arrow-icon {
+  height: 1.2rem;
+  width: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.discussion-article {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.discussion-header {
+  margin-bottom: 1.5rem;
+}
+
+.featured-badge {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffc107;
+  background-color: #fff3cd;
+  border-radius: 4px;
+}
+
+.discussion-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 1rem;
+}
+
+.discussion-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-icon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.3rem;
+  color: #aaa;
+}
+
+.discussion-content {
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 2rem;
+}
+
+.discussion-content h1,
+.discussion-content h2,
+.discussion-content h3,
+.discussion-content h4,
+.discussion-content h5,
+.discussion-content h6 {
+  color: #333;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.discussion-content p {
+  margin-bottom: 1rem;
+}
+
+.discussion-content ul,
+.discussion-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.discussion-content li {
+  margin-bottom: 0.5rem;
+}
+
+.discussion-content a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.replies-section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.replies-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.replies-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #222;
+}
+
+.replies-container {
+  padding-top: 1rem;
+}

@@ -6,12 +6,6 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'firebaseUid',
-      title: 'Firebase UID',
-      type: 'string',
-      readOnly: true
-    }),
-    defineField({
       name: 'name',
       title: 'Display Name',
       type: 'string',
@@ -22,6 +16,13 @@ export default defineType({
       title: 'Email',
       type: 'string',
       validation: Rule => Rule.required().email()
+    }),
+    defineField({
+      name: 'password',
+      title: 'Password',
+      type: 'string',
+      hidden: true, // Hide this field in the Sanity Studio
+      validation: Rule => Rule.required() // Password should be required during creation via API
     }),
     defineField({
       name: 'avatar',
@@ -40,6 +41,7 @@ export default defineType({
           { title: 'Admin', value: 'admin' }
         ]
       }
+
     })
   ],
   preview: {

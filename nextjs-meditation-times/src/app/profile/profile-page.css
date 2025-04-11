@@ -1,0 +1,655 @@
+/* src/styles/profile-page.css */
+
+:root {
+    /* Colors */
+    --primary-hue: 205; /* Sky */
+    --secondary-hue: 250; /* Purple/Indigo */
+    --success-hue: 145; /* Green */
+    --warning-hue: 40;  /* Amber */
+    --danger-hue: 0;    /* Red */
+  
+    --primary-color: hsl(var(--primary-hue), 70%, 55%);
+    --primary-color-dark: hsl(var(--primary-hue), 70%, 45%);
+    --secondary-color: hsl(var(--secondary-hue), 60%, 60%);
+    --secondary-color-dark: hsl(var(--secondary-hue), 60%, 50%);
+    --success-color: hsl(var(--success-hue), 60%, 45%);
+    --success-color-dark: hsl(var(--success-hue), 60%, 35%);
+    --danger-color: hsl(var(--danger-hue), 70%, 55%);
+    --danger-color-dark: hsl(var(--danger-hue), 70%, 45%);
+    --warning-color: hsl(var(--warning-hue), 80%, 55%);
+  
+    --text-primary: #1e293b;    /* slate-900 */
+    --text-secondary: #475569;  /* slate-600 */
+    --text-muted: #94a3b8;      /* slate-400 */
+    --text-on-primary: #ffffff;
+    --text-on-danger: #ffffff;
+  
+    --bg-card: #ffffff;
+    --bg-header: linear-gradient(135deg, hsl(var(--primary-hue), 100%, 97%), hsl(var(--secondary-hue), 100%, 97%));
+    --bg-placeholder: linear-gradient(135deg, hsl(var(--success-hue), 100%, 97%), hsl(180, 50%, 96%)); /* Green/Teal */
+    --bg-body: #f8fafc; /* slate-50 */
+  
+    --border-light: #e2e8f0; /* slate-200 */
+    --border-medium: #cbd5e1; /* slate-300 */
+  
+    /* Typography */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+    /* Spacing */
+    --space-1: 0.25rem; /* 4px */
+    --space-2: 0.5rem;  /* 8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem;    /* 16px */
+    --space-5: 1.25rem; /* 20px */
+    --space-6: 1.5rem;  /* 24px */
+    --space-8: 2rem;    /* 32px */
+    --space-10: 2.5rem; /* 40px */
+    --space-12: 3rem;   /* 48px */
+  
+    /* Borders & Shadows */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-full: 9999px;
+  
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+  
+  body { /* Optional: Set base font */
+    font-family: var(--font-sans);
+    background-color: var(--bg-body);
+    color: var(--text-secondary);
+    margin: 0; /* Reset default margin */
+  }
+  
+  /* --- General Profile Page Styles --- */
+  
+  .profile-container {
+    max-width: 56rem; /* equiv ~max-w-4xl */
+    margin: var(--space-12) auto;
+    padding: var(--space-4);
+  }
+  
+  @media (min-width: 768px) {
+    .profile-container {
+      padding: var(--space-6);
+    }
+  }
+  
+  .profile-card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-light);
+    overflow: hidden; /* Ensure contents respect border-radius */
+  }
+  
+  /* --- Header --- */
+  .profile-header {
+    padding: var(--space-8);
+    background-image: var(--bg-header);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column; /* Mobile first */
+    align-items: center;
+    gap: var(--space-6); /* Adjusted gap */
+  }
+  
+  /* Styles for the wrapper div rendered by UserAvatar component */
+  .profile-avatar-wrapper {
+      flex-shrink: 0;
+      position: relative;
+      border-radius: var(--radius-full); /* Apply border-radius to wrapper */
+      /* Add ring effect directly */
+      outline: 4px solid var(--bg-card);
+      outline-offset: -1px; /* Adjust offset if needed */
+      box-shadow: var(--shadow-md); /* Add shadow */
+  }
+  
+  .profile-info {
+    flex-grow: 1;
+    text-align: center; /* Mobile first */
+  }
+  
+  .user-name {
+    font-size: 1.875rem; /* text-3xl */
+    line-height: 2.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  @media (min-width: 768px) {
+      .user-name {
+          font-size: 2.25rem; /* text-4xl */
+          line-height: 2.5rem;
+      }
+  }
+  
+  
+  .user-email {
+    margin-top: var(--space-1);
+    font-size: 1.125rem; /* text-lg */
+    color: var(--text-secondary);
+  }
+  
+  .badge-container {
+    margin-top: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Mobile first */
+    gap: var(--space-3);
+  }
+  
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem var(--space-3); /* Adjusted padding */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .badge-role { /* Example specific badge style */
+    background-color: hsl(var(--primary-hue), 100%, 95%); /* sky-100 */
+    color: hsl(var(--primary-hue), 80%, 35%); /* sky-800 */
+  }
+  
+  .badge-version { /* Example specific badge style */
+    background-color: hsl(var(--secondary-hue), 100%, 95%); /* indigo-100 */
+    color: hsl(var(--secondary-hue), 80%, 35%); /* indigo-800 */
+  }
+  
+  /* Header Responsive */
+  @media (min-width: 640px) { /* sm breakpoint */
+    .profile-header {
+      flex-direction: row;
+      align-items: center;
+       gap: var(--space-8); /* Increase gap on larger screens */
+    }
+    .profile-info {
+      text-align: left;
+    }
+    .badge-container {
+      justify-content: flex-start;
+    }
+  }
+  
+  
+  /* --- Details Section --- */
+  .profile-details {
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  
+  .detail-section {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+  }
+  
+  .detail-title-area {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  
+  .detail-icon {
+    width: 1.5rem; /* w-6 */
+    height: 1.5rem; /* h-6 */
+    flex-shrink: 0;
+    /* Colors set via specific classes or inline styles */
+  }
+  .detail-icon-testimony { color: var(--primary-color); }
+  .detail-icon-prayer { color: var(--secondary-color); }
+  
+  
+  .detail-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  
+  .detail-content {
+    color: var(--text-secondary);
+    line-height: 1.65; /* leading-relaxed */
+    white-space: pre-line; /* Preserve line breaks */
+    /* Basic prose-like styling */
+    max-width: none; /* Override any container limits if needed */
+  }
+  .detail-content p:not(:last-child) { margin-bottom: 1em; } /* Add space between paragraphs */
+  .detail-content strong { color: var(--text-primary); font-weight: 600; }
+  /* Add more styles for lists, links etc. if needed inside content */
+  
+  
+  /* --- Placeholder Section --- */
+  .placeholder-section {
+      padding: var(--space-8);
+      background-image: var(--bg-placeholder);
+      border-radius: var(--radius-lg);
+      border: 1px solid hsl(var(--success-hue), 50%, 90%);
+      text-align: center;
+  }
+  .placeholder-icon {
+      width: 3rem; /* w-12 */
+      height: 3rem; /* h-12 */
+      color: var(--success-color);
+      margin: 0 auto var(--space-4) auto;
+  }
+  .placeholder-title {
+      font-size: 1.25rem; /* text-xl */
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+  }
+  .placeholder-text {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+  }
+  /* Placeholder button uses action-button styles below */
+  
+  
+  /* --- Actions Section --- */
+  .profile-actions {
+    padding: var(--space-6);
+    margin-top: var(--space-8); /* Space above actions */
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+  
+  .action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-5);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    text-decoration: none; /* For Link components styled as buttons */
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s ease-in-out;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  
+  .action-button:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px); /* Subtle lift */
+    /* filter: brightness(1.1); /* Alternative hover effect */
+  }
+  
+  .action-button:focus-visible { /* Modern focus outline */
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px hsla(var(--primary-hue), 70%, 70%, 0.5); /* Example focus ring */
+  }
+  
+  
+  .action-button .button-icon {
+    width: 1rem; /* w-4 */
+    height: 1rem; /* h-4 */
+    margin-right: var(--space-2);
+  }
+  
+  /* Specific Button Colors */
+  .button-edit { background-color: var(--primary-color); color: var(--text-on-primary); }
+  .button-edit:hover { background-color: var(--primary-color-dark); }
+  .button-meditations { background-color: var(--success-color); color: var(--text-on-primary); }
+  .button-meditations:hover { background-color: var(--success-color-dark); }
+  .button-prayer { background-color: var(--secondary-color); color: var(--text-on-primary); }
+  .button-prayer:hover { background-color: var(--secondary-color-dark); }
+  .button-signout { background-color: var(--danger-color); color: var(--text-on-danger); }
+  .button-signout:hover { background-color: var(--danger-color-dark); }
+  .button-placeholder { background-color: var(--success-color); color: var(--text-on-primary); } /* For placeholder button */
+  .button-placeholder:hover { background-color: var(--success-color-dark); }
+  .button-signin { background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color)); color: var(--text-on-primary);} /* Gradient for sign in */
+  .button-signin:hover { filter: brightness(1.1); box-shadow: var(--shadow-lg); }
+  .button-refresh { background-color: var(--primary-color); color: var(--text-on-primary); }
+  .button-refresh:hover { background-color: var(--primary-color-dark); }
+  
+  
+  /* Button Alignment */
+  .button-signout {
+     margin-left: 0; /* Mobile first */
+  }
+  @media (min-width: 640px) { /* sm breakpoint */
+    .button-signout {
+      margin-left: auto; /* Push signout button right on larger screens */
+    }
+  }
+  
+  
+  /* --- Loading / Error / Not Found / Signin States --- */
+  /* Base styles for state containers */
+  .state-container {
+      max-width: 36rem; /* max-w-lg */
+      margin: var(--space-12) auto;
+      padding: var(--space-8);
+      background-color: var(--bg-card);
+      box-shadow: var(--shadow-xl);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      border: 1px solid var(--border-light);
+  }
+  .state-icon {
+      width: 4rem; /* w-16 */
+      height: 4rem; /* h-16 */
+      margin: 0 auto var(--space-5) auto;
+  }
+  .state-title {
+      font-size: 1.875rem; /* text-3xl */
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+  }
+  .state-message {
+      margin-bottom: var(--space-8);
+      color: var(--text-secondary);
+      line-height: 1.65;
+  }
+  .state-message-emphasis { /* For error text */
+      background-color: hsla(var(--danger-hue), 100%, 95%, 0.5);
+      color: hsl(var(--danger-hue), 70%, 40%);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      display: inline-block; /* Fit content */
+  }
+  
+  /* Specific State Icon Colors */
+  .loading-state .state-icon { color: var(--primary-color); animation: spin 1.5s linear infinite; }
+  .error-state .state-icon { color: var(--danger-color); }
+  .notfound-state .state-icon { color: var(--warning-color); }
+  .signin-state .state-icon { color: var(--primary-color); }
+  
+  
+  /* Spinner Animation */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Container for buttons in states */
+  .state-actions {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-4);
+  }
+  /* Use .action-button styles for buttons within states */
+
+  /* src/styles/profile-page.css (Additions for Inline Edit) */
+
+.detail-title-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space out title and edit button */
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.edit-section-button {
+    background: none;
+    border: none;
+    padding: var(--space-1) var(--space-2);
+    margin: 0;
+    color: var(--primary-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s, color 0.15s;
+}
+.edit-section-button:hover {
+    background-color: hsl(var(--primary-hue), 100%, 96%); /* Light blue hover */
+    color: var(--primary-color-dark);
+}
+.edit-section-button .button-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* Form displayed during editing */
+.edit-prayer-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.edit-prayer-textarea {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-height: 120px; /* Give it some height */
+}
+.edit-prayer-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px hsla(var(--primary-hue), 70%, 70%, 0.5);
+}
+.edit-prayer-textarea:disabled {
+     background-color: #f1f5f9; /* slate-100 */
+     cursor: not-allowed;
+}
+
+
+.edit-prayer-actions {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+/* Use action-button styles, maybe smaller padding */
+.button-save-prayer, .button-cancel-edit {
+    padding: var(--space-2) var(--space-4);
+}
+/* Specific colors if needed, otherwise reuse existing */
+.button-save-prayer {
+    background-color: var(--success-color);
+    color: var(--text-on-primary);
+    min-width: 100px; /* Space for text/spinner */
+}
+.button-save-prayer:hover {
+    background-color: var(--success-color-dark);
+}
+.button-save-prayer:disabled {
+     background-color: var(--success-color);
+     opacity: 0.7;
+     cursor: not-allowed;
+}
+.button-save-prayer:disabled:hover {
+    background-color: var(--success-color);
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+
+.button-cancel-edit {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-medium);
+}
+.button-cancel-edit:hover {
+     background-color: #f1f5f9; /* slate-100 */
+     border-color: var(--border-medium);
+     box-shadow: var(--shadow-sm);
+     transform: none;
+}
+.button-cancel-edit:disabled {
+     opacity: 0.7;
+     cursor: not-allowed;
+}
+
+
+/* Status Messages within edit form */
+.edit-prayer-success-message,
+.edit-prayer-error-message {
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    margin-top: var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.edit-prayer-success-message {
+    background-color: hsl(var(--success-hue), 100%, 95%);
+    color: hsl(var(--success-hue), 70%, 35%);
+    border: 1px solid hsl(var(--success-hue), 50%, 85%);
+}
+
+.edit-prayer-error-message {
+     background-color: hsl(var(--danger-hue), 100%, 96%);
+    color: hsl(var(--danger-hue), 70%, 45%);
+    border: 1px solid hsl(var(--danger-hue), 50%, 88%);
+}/* src/styles/profile-page.css (Additions for Inline Edit) */
+
+.detail-title-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space out title and edit button */
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.edit-section-button {
+    background: none;
+    border: none;
+    padding: var(--space-1) var(--space-2);
+    margin: 0;
+    color: var(--primary-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s, color 0.15s;
+}
+.edit-section-button:hover {
+    background-color: hsl(var(--primary-hue), 100%, 96%); /* Light blue hover */
+    color: var(--primary-color-dark);
+}
+.edit-section-button .button-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* Form displayed during editing */
+.edit-prayer-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.edit-prayer-textarea {
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-height: 120px; /* Give it some height */
+}
+.edit-prayer-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px hsla(var(--primary-hue), 70%, 70%, 0.5);
+}
+.edit-prayer-textarea:disabled {
+     background-color: #f1f5f9; /* slate-100 */
+     cursor: not-allowed;
+}
+
+
+.edit-prayer-actions {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+/* Use action-button styles, maybe smaller padding */
+.button-save-prayer, .button-cancel-edit {
+    padding: var(--space-2) var(--space-4);
+}
+/* Specific colors if needed, otherwise reuse existing */
+.button-save-prayer {
+    background-color: var(--success-color);
+    color: var(--text-on-primary);
+    min-width: 100px; /* Space for text/spinner */
+}
+.button-save-prayer:hover {
+    background-color: var(--success-color-dark);
+}
+.button-save-prayer:disabled {
+     background-color: var(--success-color);
+     opacity: 0.7;
+     cursor: not-allowed;
+}
+.button-save-prayer:disabled:hover {
+    background-color: var(--success-color);
+    transform: none;
+    box-shadow: var(--shadow-sm);
+}
+
+
+.button-cancel-edit {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-medium);
+}
+.button-cancel-edit:hover {
+     background-color: #f1f5f9; /* slate-100 */
+     border-color: var(--border-medium);
+     box-shadow: var(--shadow-sm);
+     transform: none;
+}
+.button-cancel-edit:disabled {
+     opacity: 0.7;
+     cursor: not-allowed;
+}
+
+
+/* Status Messages within edit form */
+.edit-prayer-success-message,
+.edit-prayer-error-message {
+    display: flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+    margin-top: var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.edit-prayer-success-message {
+    background-color: hsl(var(--success-hue), 100%, 95%);
+    color: hsl(var(--success-hue), 70%, 35%);
+    border: 1px solid hsl(var(--success-hue), 50%, 85%);
+}
+
+.edit-prayer-error-message {
+     background-color: hsl(var(--danger-hue), 100%, 96%);
+    color: hsl(var(--danger-hue), 70%, 45%);
+    border: 1px solid hsl(var(--danger-hue), 50%, 88%);
+}
