@@ -38,7 +38,10 @@ export default function AudioPlayButton({ src, title, yearWeek, artist, artworkU
     if (!src || localError) return;
   
     if (isThisTrackLoaded) {
-      isPlaying ? pause() : play();
+      if (isPlaying) 
+        pause();
+      else
+        play();
     } else {
       loadAndPlay({
         src: src.trim(),

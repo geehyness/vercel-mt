@@ -26,7 +26,12 @@ export default function YearFilter({ years, initialYear }: YearFilterProps) {
   // Fixed handler with useCallback
   const handleYearChange = useCallback((year: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    year === 'all' ? params.delete('year') : params.set('year', year);
+    
+    if(year === 'all')
+      params.delete('year');
+    else
+      params.set('year', year);
+
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     setSelectedYear(year);
     localStorage.setItem('selectedYear', year);

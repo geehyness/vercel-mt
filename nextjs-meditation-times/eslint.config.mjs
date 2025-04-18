@@ -13,8 +13,19 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-unused-vars": "off", // Already off
+      "@typescript-eslint/no-explicit-any": "off", // Already off
+
+      // Added rules based on your request:
+
+      // Change 'no-unused-expressions' from error to warning
+      "@typescript-eslint/no-unused-expressions": "warn",
+
+      // Or uncomment the line below to turn 'no-unused-expressions' completely off:
+      // "@typescript-eslint/no-unused-expressions": "off",
+
+      // Turn off the 'react-hooks/exhaustive-deps' warning
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ];

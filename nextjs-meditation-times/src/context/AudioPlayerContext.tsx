@@ -132,12 +132,17 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
     const mediaHandlers = {
       play: () => audio.play(),
       pause: () => audio.pause(),
-      seekbackward: (details: any) => 
-        audio.currentTime = Math.max(audio.currentTime - (details.seekOffset || 10), 0),
-      seekforward: (details: any) => 
-        audio.currentTime = Math.min(audio.currentTime + (details.seekOffset || 10), audio.duration),
-      seekto: (details: any) => 
-        details.seekTime !== undefined && (audio.currentTime = details.seekTime)
+      seekbackward: (details: any) => {
+        audio.currentTime = Math.max(audio.currentTime - (details.seekOffset || 10), 0);
+      },
+      seekforward: (details: any) => {
+        audio.currentTime = Math.min(audio.currentTime + (details.seekOffset || 10), audio.duration);
+      },
+      seekto: (details: any) => {
+        if (details.seekTime !== undefined) {
+          audio.currentTime = details.seekTime;
+        }
+      }
     };
 
     Object.entries(mediaHandlers).forEach(([action, handler]) => 
@@ -194,7 +199,7 @@ export const AudioPlayerProvider = ({ children }: { children: ReactNode }) => {
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
-  }, [stop]);
+  }, []);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
