@@ -1,70 +1,80 @@
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
-  name: 'reply',
-  title: 'Discussion Reply',
+  name: 'comment',
+  title: 'Comment',
   type: 'document',
   fields: [
     defineField({
-      name: 'content',
-      title: 'Reply Content',
+      name: 'comment',
+      title: 'Comment',
       type: 'text',
       rows: 4,
-      validation: Rule => Rule.required().max(1000),
+      validation: Rule => Rule.required().max(500),
     }),
     defineField({
       name: 'approved',
       title: 'Approved',
       type: 'boolean',
-      description: 'Replies won\'t show until approved by a moderator',
+      description: 'Comments won\'t show on the site until approved.',
       initialValue: false,
       readOnly: ({ currentUser }) =>
         !(currentUser?.roles?.some(role => ['administrator', 'editor'].includes(role.name))),
+      options: {
+        layout: 'checkbox',
+      },
     }),
     defineField({
-      name: 'discussion',
-      title: 'Discussion',
+      name: 'post',
+      title: 'Post',
       type: 'reference',
-      to: [{ type: 'discussion' }],
+      to: [{ type: 'post' }],
       validation: Rule => Rule.required(),
       readOnly: true,
     }),
     defineField({
-      name: 'author',
-      title: 'Author',
+      name: 'user',
+      title: 'User',
       type: 'reference',
       to: [{ type: 'user' }],
-      validation: Rule => Rule.required(),
       readOnly: true,
     }),
     defineField({
       name: 'createdAt',
       title: 'Created At',
       type: 'datetime',
-      initialValue: () => new Date().toISOString(),
+      options: {
+        dateFormat: 'YYYY-MM-DD',
+        timeFormat: 'HH:mm',
+        calendarTodayLabel: 'Today',
+      },
       readOnly: true,
     }),
   ],
   preview: {
     select: {
-      content: 'content',
-      discussionTitle: 'discussion.title',
+      comment: 'comment',
+      postTitle: 'post.title',
       approved: 'approved',
-      createdAt: 'createdAt',
-      authorName: 'author.name',
+      createdAt: '_createdAt',
+      userName: 'user.name',
     },
-    prepare({ content, discussionTitle, approved, createdAt, authorName }) {
-      const MAX_PREVIEW = 40;
-      const truncatedContent = content?.length > MAX_PREVIEW
-        ? content.substring(0, MAX_PREVIEW) + '...'
-        : content;
+    prepare({ comment, postTitle, approved, createdAt, userName }) {
+      const MAX_COMMENT_PREVIEW = 40;
+      const truncatedComment = comment?.length > MAX_COMMENT_PREVIEW
+        ? comment.substring(0, MAX_COMMENT_PREVIEW) + '...'
+        : comment;
 
       return {
-        title: `${authorName || 'Anonymous'} replied to "${discussionTitle || 'Untitled Discussion'}"`,
-        subtitle: `${createdAt ? new Date(createdAt).toLocaleString() : 'Unknown Date'} - ${truncatedContent || '(No content)'}`,
+        title: `${userName || 'Anonymous'} on "${postTitle || 'Untitled Post'}"`,
+        subtitle: `${createdAt ? new Date(createdAt).toLocaleString() : 'Unknown Date'} - ${truncatedComment || '(No comment text)'}`,
         media: approved ? '✅' : '⏳',
       };
     },
+  },
+  initialValue: {
+    createdAt: new Date().toISOString(),
+    approved: false,
   },
   orderings: [
     {

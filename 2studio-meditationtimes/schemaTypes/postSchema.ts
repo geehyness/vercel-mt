@@ -1,3 +1,4 @@
+// schemas/post.ts
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
@@ -38,6 +39,17 @@ export default defineType({
       options: {
         disableNew: true,
       },
+    }),
+     // Add the new audio file field
+    defineField({
+      name: 'aiAudioAnalysis',
+      title: 'AI Audio Analysis',
+      type: 'file', // Use the file type
+      description: 'Upload an audio file containing the AI analysis of the post content.',
+      options: {
+         accept: 'audio/mpeg,audio/wav,audio/ogg,audio/aac', // Restrict to common audio types
+      },
+      // Optional: Add validation, e.g., max file size Rule.maxFileSize(50000000) // 50MB
     }),
     defineField({
       name: 'mainImage',
@@ -80,10 +92,30 @@ export default defineType({
       author: 'author.name',
       media: 'mainImage',
       yearWeek: 'yearWeek',
+      // You could add aiAudioAnalysis here if you wanted to see if it exists in preview
+      // aiAudioAnalysis: 'aiAudioAnalysis',
     },
     prepare(selection) {
-      const { author } = selection;
-      return { ...selection, subtitle: author && `by ${author}` };
+      const { author, yearWeek, title } = selection;
+      // Add an indicator in the subtitle if audio is present (optional)
+      // const hasAudio = selection.aiAudioAnalysis?.asset;
+      return {
+        ...selection,
+        title: `${yearWeek}: ${title}`,
+        subtitle: author && `by ${author}`,
+      };
     },
   },
+  orderings: [
+    {
+      title: 'Year-Week, Newest First',
+      name: 'yearWeekDesc',
+      by: [{ field: 'yearWeek', direction: 'desc' }],
+    },
+     {
+      title: 'Creation Date, Newest First',
+      name: 'createdAtDesc',
+      by: [{ field: '_createdAt', direction: 'desc' }],
+    },
+  ]
 })

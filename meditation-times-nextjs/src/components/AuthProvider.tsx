@@ -1,161 +1,169 @@
-"use client"
-import { createContext, useContext, useEffect, useState } from "react"
-import { 
-  User, 
-  onAuthStateChanged, 
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  signOut as firebaseSignOut,
-  updateProfile,
-  GoogleAuthProvider
-} from "firebase/auth"
-import { auth, googleProvider } from "@/lib/firebase"
-import { doc, setDoc, getDoc, serverTimestamp, Timestamp } from "firebase/firestore"
-import { db } from "@/lib/firebase"
+// src/providers/AuthProvider.tsx
+"use client" // This must be at the top
+import { createContext, useContext, useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { AppUser } from '@/types'
 
 interface AuthContextType {
-  user: User | null
-  appUser: AppUser | null
+  user: AppUser | null
   loading: boolean
+  error: string | null
   isAuthenticated: boolean
-  signInWithEmail: (email: string, password: string) => Promise<void>
-  signUpWithEmail: (email: string, password: string, name: string) => Promise<void>
-  signInWithGoogle: () => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
+  signUp: (name: string, email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
-}
-
-interface AppUser {
-  uid: string
-  email: string
-  name: string
-  photoURL?: string
-  createdAt: string
-  lastLogin: string
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [appUser, setAppUser] = useState<AppUser | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [state, setState] = useState({
+    user: null,
+    loading: true,
+    error: null,
+    isAuthenticated: false
+  })
 
-  // Helper function to safely convert Firestore timestamp to ISO string
-  const toISOString = (timestamp: any): string => {
-    if (timestamp?.toDate) {
-      return timestamp.toDate().toISOString()
-    }
-    if (typeof timestamp === 'string') {
-      return timestamp
-    }
-    return new Date().toISOString()
-  }
+  const router = useRouter()
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      try {
-        if (!firebaseUser) {
-          setUser(null)
-          setAppUser(null)
-          setLoading(false)
-          return
-        }
-
-        // Get or create user document in Firestore
-        const userRef = doc(db, "users", firebaseUser.uid)
-        const userDoc = await getDoc(userRef)
-
-        const userData = {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-          photoURL: firebaseUser.photoURL || '',
-          lastLogin: serverTimestamp()
-        }
-
-        if (userDoc.exists()) {
-          await setDoc(userRef, userData, { merge: true })
-        } else {
-          await setDoc(userRef, {
-            ...userData,
-            createdAt: serverTimestamp()
-          })
-        }
-
-        const userSnapshot = await getDoc(userRef)
-        const userDataFromDb = userSnapshot.data()
-
-        setUser(firebaseUser)
-        setAppUser({
-          ...userData,
-          createdAt: toISOString(userDataFromDb?.createdAt),
-          lastLogin: new Date().toISOString()
-        })
-      } catch (error) {
-        console.error("Auth state change error:", error)
-        setUser(null)
-        setAppUser(null)
-      } finally {
-        setLoading(false)
-      }
+ // In your AuthProvider component
+const checkAuthStatus = async () => {
+  setState(prev => ({ ...prev, loading: true }))
+  
+  try {
+    const response = await fetch('/api/auth/session', {
+      credentials: 'include'
     })
 
-    return unsubscribe
+    // First check if response is OK
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    // Check content type before parsing
+    const contentType = response.headers.get('content-type')
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Received non-JSON response')
+    }
+
+    const data = await response.json()
+    
+    setState({
+      user: data.authenticated ? data.user : null,
+      loading: false,
+      error: null,
+      isAuthenticated: data.authenticated
+    })
+  } catch (error) {
+    console.error('Auth check error:', error)
+    setState({
+      user: null,
+      loading: false,
+      error: error instanceof Error ? error.message : 'Authentication check failed',
+      isAuthenticated: false
+    })
+  }
+}
+
+  useEffect(() => {
+    checkAuthStatus()
   }, [])
 
-  const signInWithEmail = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
+    setState(prev => ({ ...prev, loading: true, error: null }))
+    
     try {
-      setLoading(true)
-      await signInWithEmailAndPassword(auth, email, password)
-    } finally {
-      setLoading(false)
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include'
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Sign in failed')
+      }
+
+      const user = await response.json()
+      setState({
+        user,
+        loading: false,
+        error: null,
+        isAuthenticated: true
+      })
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Sign in failed'
+      }))
     }
   }
 
-  const signUpWithEmail = async (email: string, password: string, name: string) => {
+  const signUp = async (name: string, email: string, password: string) => {
+    setState(prev => ({ ...prev, loading: true, error: null }))
+    
     try {
-      setLoading(true)
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      await updateProfile(userCredential.user, { displayName: name })
-    } finally {
-      setLoading(false)
-    }
-  }
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      })
 
-  const signInWithGoogle = async () => {
-    try {
-      setLoading(true)
-      await signInWithPopup(auth, googleProvider)
-    } finally {
-      setLoading(false)
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Sign up failed')
+      }
+
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: null
+      }))
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Sign up failed'
+      }))
     }
   }
 
   const signOut = async () => {
+    setState(prev => ({ ...prev, loading: true }))
+    
     try {
-      setLoading(true)
-      await firebaseSignOut(auth)
-      setUser(null)
-      setAppUser(null)
-    } finally {
-      setLoading(false)
+      await fetch('/api/auth/signout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+
+      setState({
+        user: null,
+        loading: false,
+        error: null,
+        isAuthenticated: false
+      })
+      router.push('/auth/signin')
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: 'Failed to sign out'
+      }))
     }
   }
 
-  const value = {
-    user,
-    appUser,
-    loading,
-    isAuthenticated: !!user,
-    signInWithEmail,
-    signUpWithEmail,
-    signInWithGoogle,
-    signOut
-  }
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        ...state,
+        signIn,
+        signUp,
+        signOut
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

@@ -1,4 +1,5 @@
-import { defineField, defineType } from 'sanity';
+// src/sanity/schemas/user.ts
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'user',
@@ -6,15 +7,8 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'firebaseUid',
-      title: 'Firebase UID',
-      type: 'string',
-      validation: Rule => Rule.required(),
-      // hidden: true <--- REMOVED THIS LINE
-    }),
-    defineField({
       name: 'name',
-      title: 'Name',
+      title: 'Display Name',
       type: 'string',
       validation: Rule => Rule.required()
     }),
@@ -25,49 +19,36 @@ export default defineType({
       validation: Rule => Rule.required().email()
     }),
     defineField({
-      name: 'role',
-      title: 'Role',
+      name: 'password',
+      title: 'Password',
       type: 'string',
-      options: {
-        list: [
-          { title: 'User', value: 'user' },
-          { title: 'Teacher', value: 'teacher' },
-          { title: 'Admin', value: 'admin' }
-        ],
-        layout: 'dropdown'
-      },
-      initialValue: 'user'
+      hidden: true, // Hide this field in the Sanity Studio
+      validation: Rule => Rule.required() // Password should be required during creation via API
     }),
     defineField({
       name: 'avatar',
       title: 'Avatar',
-      type: 'image',
-      options: {
-        hotspot: true
-      }
+      type: 'image'
     }),
     defineField({
-      name: 'createdAt',
-      title: 'Created At',
-      type: 'datetime',
-      initialValue: (new Date()).toISOString(),
-      readOnly: true
+      name: 'role',
+      title: 'Role',
+      type: 'string',
+      initialValue: 'user',
+      options: {
+        list: [
+          { title: 'User', value: 'user' },
+          { title: 'Moderator', value: 'moderator' },
+          { title: 'Admin', value: 'admin' }
+        ]
+      }
     })
   ],
   preview: {
     select: {
       title: 'name',
       subtitle: 'email',
-      media: 'avatar',
-      role: 'role'
-    },
-    prepare(selection) {
-      const { title, subtitle, media, role } = selection;
-      return {
-        title: title,
-        subtitle: `${subtitle} (${role})`,
-        media: media
-      };
+      media: 'avatar'
     }
   }
-});
+})

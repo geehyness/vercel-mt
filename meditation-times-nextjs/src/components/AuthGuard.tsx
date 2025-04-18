@@ -1,22 +1,39 @@
+// src/components/AuthGuard.tsx
 "use client"
-import { useAuth } from "@/hooks/useAuth"
-import { useRouter, usePathname } from "next/navigation"
+import { useAuth } from "@/providers/AuthProvider"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect } from "react"
-import Loading from "./Loading"
+import LoadingSpinner from "./LoadingSpinner"
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, loading, error, initialized } = useAuth()
+export default function AuthGuard({
+  children,
+  requiredRole
+}: {
+  children: React.ReactNode
+  requiredRole?: string
+}) {
+  const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
-    if (!initialized || loading) return
-    if (!user) {
+    if (!loading && !isAuthenticated) {
       const redirectUrl = encodeURIComponent(pathname || '/')
       router.push(`/auth/signin?redirect=${redirectUrl}`)
     }
-  }, [user, loading, initialized, pathname, router, error])
 
-  if (!initialized || loading) return <Loading />
+    if (!loading && isAuthenticated && requiredRole && user?.role !== requiredRole) {
+      router.push('/unauthorized')
+    }
+  }, [loading, isAuthenticated, user, requiredRole, pathname, router])
+
+  if (loading || !isAuthenticated || (requiredRole && user?.role !== requiredRole)) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner size="lg" />
+      </div>
+    )
+  }
+
   return <>{children}</>
 }

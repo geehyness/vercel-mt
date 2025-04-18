@@ -4,11 +4,12 @@ import authorSchema from './authorSchema'
 import categorySchema from './categorySchema'
 import aboutPage from './aboutPage'
 import discussion from './discussion'
-import { reply } from './reply'
+import  reply  from './reply'
 import { biblePassage } from './biblePassage'
 import  kidsLesson  from './kidsLesson'
 import { quizQuestion } from './quizQuestion'
 import user from './user'
+import comment from './comment'
 
 
 export const schemaTypes = [
@@ -21,5 +22,6 @@ export const schemaTypes = [
   biblePassage,
   kidsLesson,
   quizQuestion,
-  user
+  user,
+  comment
 ]

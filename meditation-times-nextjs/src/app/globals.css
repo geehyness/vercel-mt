@@ -15,40 +15,40 @@ body {
 .gravity-loader {
     @apply relative w-[200px] h-[200px];
   }
-  
+
   .gravity-orb {
     @apply absolute top-1/2 left-1/2 w-8 h-8 rounded-full bg-white/80;
     transform: translate(-50%, -50%);
     filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
     animation: orbitalCollapse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
+
   .orb-1 {
     transform: translate(-50%, -50%) rotate(0deg) translateX(60px);
   }
-  
+
   .orb-2 {
     transform: translate(-50%, -50%) rotate(120deg) translateX(60px);
     animation-delay: 0.2s;
   }
-  
+
   .orb-3 {
     transform: translate(-50%, -50%) rotate(240deg) translateX(60px);
     animation-delay: 0.4s;
   }
-  
+
   .gravity-core {
-    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
            w-6 h-6 rounded-full bg-white/30;
     animation: corePulse 1.5s infinite ease-in-out;
     box-shadow: 0 0 25px rgba(255,255,255,0.2);
   }
-  
+
   .gravity-text {
     @apply absolute top-full mt-8 text-center w-full text-white/80 text-sm;
     animation: textGlow 2s infinite;
   }
-  
+
   @keyframes orbitalCollapse {
     0% {
       transform: translate(-50%, -50%) rotate(0deg) translateX(60px) scale(1);
@@ -63,22 +63,107 @@ body {
       opacity: 0;
     }
   }
-  
+
   @keyframes corePulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.3); }
   }
-  
+
   @keyframes textGlow {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
   }
 
 
+  /* Custom base styles */
+  @layer base {
+    :root {
+      --color-primary: 23 37 84;
+      --color-secondary: 15 118 110;
+      --color-accent: 180 83 9;
+      --color-light: 241 245 249;
+      --color-dark: 30 41 59;
+    }
 
+    .dark {
+      --color-primary: 30 41 59;
+      --color-secondary: 20 184 166;
+      --color-accent: 217 119 6;
+      --color-light: 15 23 42;
+      --color-dark: 226 232 240;
+    }
+  }
 
+  /* Elegant body styling */
+  body {
+    @apply min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-slate-100
+           text-slate-800 dark:from-slate-900 dark:to-slate-800 dark:text-slate-100
+           font-sans antialiased leading-relaxed;
+  }
 
+  /* Custom components */
+  @layer components {
+    .btn-primary {
+      @apply px-6 py-2.5 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700
+             text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300
+             transform hover:-translate-y-0.5 focus:outline-none; /* Removed Tailwind focus styles */
+    }
 
+    .btn-primary:focus {
+      outline: none; /* Remove default browser outline */
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.5); /* Custom focus ring */
+    }
 
+    .card {
+      @apply bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden
+             transition-all duration-300 hover:shadow-xl border border-slate-200 dark:border-slate-700;
+    }
 
+    .section-title {
+      @apply text-3xl md:text-4xl font-bold mb-6 text-slate-900 dark:text-white
+             relative after:absolute after:bottom-[-8px] after:left-0 after:w-16 after:h-1
+             after:bg-gradient-to-r after:from-teal-500 after:to-blue-600;
+    }
+  }
 
+  /* Loading Animation - Enhanced */
+  .gravity-loader {
+    @apply relative w-[200px] h-[200px];
+  }
+
+  .gravity-orb {
+    @apply absolute top-1/2 left-1/2 w-8 h-8 rounded-full bg-teal-400/80;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 8px rgba(20, 184, 166, 0.4));
+    animation: orbitalCollapse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .orb-1 {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(60px);
+  }
+
+  .orb-2 {
+    transform: translate(-50%, -50%) rotate(120deg) translateX(60px);
+    animation-delay: 0.2s;
+    @apply bg-blue-400/80;
+  }
+
+  .orb-3 {
+    transform: translate(-50%, -50%) rotate(240deg) translateX(60px);
+    animation-delay: 0.4s;
+    @apply bg-indigo-400/80;
+  }
+
+  .gravity-core {
+    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+           w-6 h-6 rounded-full bg-white/50;
+    animation: corePulse 1.5s infinite ease-in-out;
+    box-shadow: 0 0 25px rgba(255,255,255,0.3);
+  }
+
+  .gravity-text {
+    @apply absolute top-full mt-8 text-center w-full text-slate-600 dark:text-slate-300 text-sm;
+    animation: textGlow 2s infinite;
+  }
+
+  /* Keyframes remain the same */

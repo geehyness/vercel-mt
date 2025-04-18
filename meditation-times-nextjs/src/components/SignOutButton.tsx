@@ -1,6 +1,6 @@
+// src/components/SignOutButton.tsx
 "use client"
-import { deleteCookie } from 'cookies-next'
-import { auth } from '@/lib/firebase'
+import { useAuth } from "@/hooks/useAuth"
 import { toast } from 'react-hot-toast'
 
 interface SignOutButtonProps {
@@ -14,18 +14,16 @@ export function SignOutButton({
   children = "Sign Out",
   onClick
 }: SignOutButtonProps) {
+  const { signOut } = useAuth();
+
   const handleSignOut = async () => {
     try {
-      await auth.signOut()
-      deleteCookie('firebaseToken')
-      window.sessionStorage.clear()
-      
-      if (onClick) onClick()
-      window.location.href = '/auth/signin'
-      toast.success('Signed out successfully')
+      await signOut();
+      if (onClick) onClick();
+      toast.success('Signed out successfully');
     } catch (error: unknown) {
-      console.error('Sign out error:', error)
-      toast.error('Failed to sign out')
+      console.error('Sign out error:', error);
+      toast.error('Failed to sign out');
     }
   }
 

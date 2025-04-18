@@ -7,146 +7,106 @@ import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 export function Footer() {
   const pathname = usePathname();
 
-  // Skip rendering on auth pages
   if (['/auth/signin', '/auth/signup'].includes(pathname)) return null;
 
   return (
-    <footer className="bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900 border-t border-orange-200 dark:border-red-900 mt-auto">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="website-footer">
+      <div className="footer-container">
+        <div className="footer-grid">
           {/* Logo and description */}
           <div className="space-y-4">
             <Link
               href="/"
-              className="text-2xl font-bold text-orange-800 dark:text-orange-100"
+              className="footer-logo"
             >
-              Meditation Times
+              <span className="footer-logo-link">Meditation Times</span>
             </Link>
-            <p className="text-orange-700 dark:text-orange-200">
-              Helping you find peace and mindfulness in your daily life.
+
+            <h3>
+            Joshua 1:8 New King James Version (NKJV)
+            </h3>
+            <p className="footer-description">
+            This Book of the Law shall not depart from your mouth, but you shall meditate in it day and night, that you may observe to do according to all that is written in it. For then you will make your way prosperous, and then you will have good success.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100">
-                <Facebook className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100">
-                <Twitter className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100">
-                <Instagram className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100">
-                <Youtube className="h-6 w-6" />
-              </a>
+            <div className="footer-social-icons">
+              {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+                <a key={i} href="#" className="footer-social-icon">
+                  <Icon className="h-5 w-5" />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links
           <div>
-            <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-100 mb-4">
+            <h3 className="footer-heading">
               Quick Links
             </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/about"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  About Us
-                </Link>
-              </li>{/*
-              <li>
-                <Link
-                  href="/community/discussions"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  Community
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/kids"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  Kids Corner
-                </Link>
-              </li>*/}
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  Contact
-                </Link>
-              </li>
+            <ul className="footer-links-list">
+              {['About', 'Blog', 'Guides', 'Contact'].map((link) => (
+                <li key={link}>
+                  <Link
+                    href={`/${link.toLowerCase()}`}
+                    className="footer-link"
+                  >
+                    {link}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
+          </div> */}
 
-          {/* Resources */}
+          {/* Resources
           <div>
-            <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-100 mb-4">
+            <h3 className="footer-heading">
               Resources
             </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/blog"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guides"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  Meditation Guides
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/faq"
-                  className="text-orange-700 dark:text-orange-200 hover:text-orange-900 dark:hover:text-orange-100"
-                >
-                  FAQ
-                </Link>
-              </li>
+            <ul className="footer-links-list">
+              {['Meditation Techniques', 'Sleep Stories', 'Mindfulness Exercises', 'FAQ'].map((resource) => (
+                <li key={resource}>
+                  <Link
+                    href={`/resources/${resource.toLowerCase().replace(/\s+/g, '-')}`}
+                    className="footer-link"
+                  >
+                    {resource}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
+          </div> */}
 
-          {/* Newsletter */}
+          {/* Newsletter 
           <div>
-            <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-100 mb-4">
+            <h3 className="newsletter-heading">
               Newsletter
             </h3>
-            <p className="text-orange-700 dark:text-orange-200 mb-4">
-              Subscribe to get meditation tips and updates.
+            <p className="newsletter-description">
+              Join our community for weekly mindfulness tips.
             </p>
-            <form className="flex flex-col space-y-2">
+            <form className="newsletter-form">
               <input
                 type="email"
                 placeholder="Your email"
-                className="px-4 py-2 rounded-md border border-orange-300 dark:border-orange-700 bg-white dark:bg-orange-800 text-orange-900 dark:text-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="newsletter-input"
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-md transition-colors"
+                className="newsletter-button"
               >
                 Subscribe
               </button>
             </form>
-          </div>
+          </div> */}
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-orange-200 dark:border-orange-800 mt-8 pt-8 text-center text-orange-700 dark:text-orange-300">
+        <div className="copyright">
           <p>&copy; {new Date().getFullYear()} Meditation Times. All rights reserved.</p>
-          <div className="flex justify-center space-x-4 mt-2">
-            <Link href="/privacy" className="hover:underline">
+          <div className="copyright-links">
+            <Link href="/privacy" className="copyright-link">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:underline">
+            <Link href="/terms" className="copyright-link">
               Terms of Service
             </Link>
           </div>

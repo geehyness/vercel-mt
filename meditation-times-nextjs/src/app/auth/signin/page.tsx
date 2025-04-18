@@ -1,4 +1,4 @@
-// Sign-in page
+// src/app/auth/signin/page.tsx
 'use client';
 import { AuthForm } from '@/components/AuthForm';
 

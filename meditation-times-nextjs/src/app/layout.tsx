@@ -5,7 +5,6 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AuthProvider } from "@/components/AuthProvider";
 
-// Local font configuration with absolute paths
 const inter = localFont({
   src: [
     {
@@ -29,8 +28,8 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Meditation Times",
-  description: "Daily spiritual guidance through meditation and prayer",
+  title: "Meditation Times | Daily Meditation Guidance",
+  description: "Elevate your mindfulness practice with daily curated meditations and spiritual guidance",
 };
 
 export default function RootLayout({
@@ -40,10 +39,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} font-sans`}>
-      <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <Header />
-          <main className="flex-grow pt-16">
+          <main className="flex-grow pt-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {children}
             </div>

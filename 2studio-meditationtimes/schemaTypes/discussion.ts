@@ -1,15 +1,6 @@
 import { defineField, defineType } from 'sanity'
+import  reply  from './reply'
 import { CommentIcon } from '@sanity/icons'
-
-// List of all Bible books for the dropdown
-const bibleBooks = [
-  { title: 'Genesis', value: 'Genesis' },
-  { title: 'Exodus', value: 'Exodus' },
-  { title: 'Leviticus', value: 'Leviticus' },
-  { title: 'Numbers', value: 'Numbers' },
-  { title: 'Deuteronomy', value: 'Deuteronomy' },
-  // Add all other books here...
-]
 
 export default defineType({
   name: 'discussion',
@@ -21,74 +12,56 @@ export default defineType({
       name: 'title',
       title: 'Discussion Title',
       type: 'string',
-      validation: Rule => [
-        Rule.required().error('Title is required'),
-        Rule.max(120).warning('Keep titles under 120 characters')
-      ]
+      validation: Rule => Rule.required().max(120)
     }),
     defineField({
       name: 'content',
       title: 'Detailed Explanation',
       type: 'text',
-      rows: 4,
-      validation: Rule => Rule.required().error('Content is required')
+      rows: 4
     }),
     defineField({
-  name: 'biblePassage',
-  title: 'Bible Reference',
-  type: 'object',
-  fields: [
-    defineField({
-      name: 'book',
-      type: 'string',
-      validation: Rule => Rule.required(),
-      options: { list: bibleBooks }
+      name: 'biblePassage',
+      title: 'Bible Reference',
+      type: 'object',
+      fields: [
+        defineField({
+          name: 'book',
+          type: 'string',
+          validation: Rule => Rule.required(),
+          options: {
+            list: [
+              // Add all books of the Bible here
+              { title: 'Genesis', value: 'Genesis' },
+              { title: 'Exodus', value: 'Exodus' },
+              // ... rest of the books
+            ]
+          }
+        }),
+        defineField({
+          name: 'chapter',
+          type: 'number',
+          validation: Rule => Rule.required().min(1).max(150)
+        }),
+        defineField({
+          name: 'verseStart',
+          type: 'number',
+          validation: Rule => Rule.required().min(1).max(176)
+        }),
+        defineField({
+          name: 'verseEnd',
+          type: 'number',
+          validation: Rule => Rule.min(1).max(176)
+        })
+      ],
+      validation: Rule => Rule.required()
     }),
     defineField({
-      name: 'chapter',
-      type: 'number',
-      validation: Rule => Rule.required().min(1).max(150)
-    }),
-    defineField({
-      name: 'verseStart',
-      type: 'number',
-      validation: Rule => Rule.required().min(1).max(176)
-    }),
-    defineField({
-      name: 'verseEnd',
-      type: 'number',
-      validation: Rule => Rule.min(1).max(176)
-    }),
-    // Add this new field
-    defineField({
-      name: 'text',
-      type: 'string',
-      title: 'Passage Text',
-      description: 'The actual text of the Bible passage'
-    })
-  ],
-  validation: Rule => Rule.required()
-}),
-    defineField({
-      name: 'authorRef',
-      title: 'Author Firebase UID',
-      type: 'string',
-      validation: Rule => Rule.required().error('Author reference is required')
-    }),
-    defineField({
-      name: 'authorName',
-      title: 'Author Display Name',
-      type: 'string',
-      validation: Rule => Rule.required().error('Author name is required')
-    }),
-    defineField({
-      name: 'authorEmail',
-      title: 'Author Email',
-      type: 'string',
-      validation: Rule => [
-        Rule.required().error('Email is required'),
-        Rule.email().error('Must be a valid email address')
-      ]
+      name: 'author',
+      title: 'Author',
+      type: 'reference',
+      to: [{ type: 'user' }],
+      validation: Rule => Rule.required()
     }),
     defineField({
       name: 'isFeatured',
@@ -101,27 +74,15 @@ export default defineType({
       title: 'Created At',
       type: 'datetime',
       initialValue: () => new Date().toISOString(),
-      validation: Rule => Rule.required().error('Creation date is required')
+      validation: Rule => Rule.required()
     }),
     defineField({
       name: 'replies',
       title: 'Replies',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'reply' }] }],
-      validation: Rule => Rule.max(100).warning('Consider splitting discussions with many replies')
+      of: [reply],
+      validation: Rule => Rule.max(100) // Reduced from 500 to 100
     })
-  ],
-  orderings: [
-    {
-      title: 'Newest',
-      name: 'createdAtDesc',
-      by: [{ field: 'createdAt', direction: 'desc' }]
-    },
-    {
-      title: 'Oldest',
-      name: 'createdAtAsc',
-      by: [{ field: 'createdAt', direction: 'asc' }]
-    }
   ],
   preview: {
     select: {
@@ -130,31 +91,17 @@ export default defineType({
       chapter: 'biblePassage.chapter',
       verseStart: 'biblePassage.verseStart',
       verseEnd: 'biblePassage.verseEnd',
-      authorName: 'authorName',
-      featured: 'isFeatured',
-      replies: 'replies' // Get the references without expansion
+      authorName: 'author.name', // Assuming your user type has a name field
+      featured: 'isFeatured'
     },
-    prepare(selection) {
-      const {
-        title,
-        book,
-        chapter,
-        verseStart,
-        verseEnd,
-        authorName,
-        featured,
-        replies
-      } = selection
-      
+    prepare({ title, book, chapter, verseStart, verseEnd, authorName, featured }) {
       const passage = verseEnd 
         ? `${book} ${chapter}:${verseStart}-${verseEnd}`
         : `${book} ${chapter}:${verseStart}`
       
-      const replyCount = replies?.length || 0
-      
       return {
         title,
-        subtitle: `${authorName} • ${passage} ${featured ? '🌟' : ''} ${replyCount ? `(${replyCount} replies)` : ''}`,
+        subtitle: `${authorName} • ${passage} ${featured ? '🌟' : ''}`,
         media: CommentIcon
       }
     }
