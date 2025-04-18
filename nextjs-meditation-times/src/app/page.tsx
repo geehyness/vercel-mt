@@ -91,11 +91,12 @@ export default function PostsPage() {
   // Utility functions
   const formatYearWeekDisplay = (yearWeek: string): string => {
     if (!yearWeek || yearWeek.length < 7) return '';
-    const [year, week] = yearWeek.split('-w');
-    return `Year ${year}, Week ${week}`;
+    //const [year, week] = yearWeek.split('/w|-W/');
+    //return `Year ${year}, Week ${week}`;
+    return yearWeek.replace('w', ' - Week ')
   };
 
-  const truncateText = (text?: string, maxLength: number = 120): string => {
+  const truncateText = (text?: string, maxLength: number = 256): string => {
     if (!text) return '';
     return text.length <= maxLength ? text : `${text.substring(0, maxLength)}...`;
   };
@@ -118,29 +119,50 @@ export default function PostsPage() {
 
           {latestPost && (
             <div className="latest-meditation-container">
-              <h4 className="latest-meditation-title">Latest Meditation Times</h4>
+              <h3 className="latest-meditation-title">Latest Meditation Times</h3>
               <Link 
                 href={`/post/${latestPost.yearWeek}`} 
                 className="latest-meditation-link"
               >
-                <div className="latest-meditation-card">
-                  <h5 className="latest-meditation-card-title">
-                    {latestPost.title} ({formatYearWeekDisplay(latestPost.yearWeek)})
-                  </h5>
-                  <p className="latest-meditation-card-excerpt">
-                    {truncateText(latestPost.description || latestPost.content)}
-                  </p>
+                
+                <div className="post-card">
+                  <div className="post-week-indicator">
+                    {formatYearWeekDisplay(latestPost.yearWeek)}
+                  </div>
+    <br />
+                  <div className="post-content-container">
+                    {latestPost.mainImage?.asset?.url && (
+                      <div className="post-image-wrapper">
+                        <Image
+                          src={client.image(latestPost.mainImage).url()}
+                          alt={latestPost.mainImage.alt || latestPost.title}
+                          width={600}
+                          height={400}
+                          loading="lazy"
+                          className="post-image"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </div>
+                    )}
+
+                    <div className="post-details">
+                      <h2 className="post-title"><u>{latestPost.title}</u></h2>
+
+                      <div className="post-meta">
+                        <span className="post-author">
+                          By {latestPost.author?.name || "Pastor Nathanael"}
+                        </span>
+                      </div>
+
+                      {(latestPost.description || latestPost.content) && (
+                        <p className="post-excerpt">
+                          {truncateText(latestPost.description || latestPost.content)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </Link>
-              {latestPost.publishedAt && (
-                <p className="latest-meditation-meta">
-                  {new Date(latestPost.publishedAt).toLocaleDateString('en-US', {
-                    month: 'long', 
-                    day: 'numeric', 
-                    year: 'numeric'
-                  })} | {latestPost.author?.name || "Pastor Nathanael"}
-                </p>
-              )}
             </div>
           )}
         </div>
@@ -171,7 +193,9 @@ export default function PostsPage() {
       <div className="posts-timeline">
         {filteredPosts.length > 0 ? (
           filteredPosts.map(post => (
-            <article key={post._id} className="post-card">
+                  <article key={post._id} className="post-card">
+                    <Link href={`/post/${post.yearWeek}`} className="post-link">
+            
               <div className="post-week-indicator">
                 {formatYearWeekDisplay(post.yearWeek)}
               </div>
@@ -192,10 +216,8 @@ export default function PostsPage() {
                 )}
 
                 <div className="post-details">
-                  <Link href={`/post/${post.yearWeek}`} className="post-link">
                     <h2 className="post-title">{post.title}</h2>
-                  </Link>
-
+                  
                   <div className="post-meta">
                     <span className="post-author">
                       By {post.author?.name || "Pastor Nathanael"}
@@ -219,7 +241,10 @@ export default function PostsPage() {
                   )}
                 </div>
               </div>
+              </Link>
             </article>
+            
+
           ))
         ) : (
           <p className="no-posts-message">No posts found for the selected year.</p>

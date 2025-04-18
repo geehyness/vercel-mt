@@ -502,12 +502,12 @@ html {
   /* Latest Meditation Box */
   .latest-meditation-container {
     margin-top: var(--space-xl);
+    text-align: left;
   }
   
   .latest-meditation-title {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--primary); /* Teal title */
     margin-bottom: var(--space-md);
   }
   
@@ -677,11 +677,11 @@ html {
     position: absolute;
     top: var(--space-sm);
     left: var(--space-sm);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--dark);
+    background: #121212;
+    color: white;
     padding: var(--space-xs) var(--space-sm);
     border-radius: var(--radius-sm);
-    font-weight: 600;
+    font-weight: 900;
     backdrop-filter: blur(2px);
     border: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 2;
