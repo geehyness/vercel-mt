@@ -1,27 +1,36 @@
-// components/YearFilter.tsx
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 interface YearFilterProps {
   years: string[];
+  initialYear: string;
 }
 
-function YearFilter({ years }: YearFilterProps) {
-  const [selectedYear, setSelectedYear] = useState<string | 'all'>('all');
+export default function YearFilter({ years, initialYear }: YearFilterProps) {
+  const [selectedYear, setSelectedYear] = useState(initialYear);
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
+  // Fixed dependency array
   useEffect(() => {
-    const storedYear = localStorage.getItem('selectedYear');
-    setSelectedYear(storedYear || 'all');
-  }, []);
+    const yearParam = searchParams.get('year');
+    if (yearParam && yearParam !== selectedYear) {
+      setSelectedYear(yearParam);
+      localStorage.setItem('selectedYear', yearParam);
+    }
+  }, [searchParams, selectedYear]); // Added missing dependency
 
-  const handleYearChange = (year: string | 'all') => {
-    localStorage.setItem('selectedYear', year);
+  // Fixed handler with useCallback
+  const handleYearChange = useCallback((year: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    year === 'all' ? params.delete('year') : params.set('year', year);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     setSelectedYear(year);
-    router.refresh(); // Or you can manage state and re-render without a full refresh
-  };
+    localStorage.setItem('selectedYear', year);
+  }, [searchParams, pathname, router]);
 
   return (
     <div className="year-filter">
@@ -41,8 +50,40 @@ function YearFilter({ years }: YearFilterProps) {
           {year}
         </button>
       ))}
+      
+      <style jsx>{`
+        .year-filter {
+          margin-bottom: 1.5rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+        .filter-label {
+          font-weight: bold;
+          margin-right: 0.5rem;
+        }
+        .filter-option {
+          background: #f0f0f0;
+          border: 1px solid #ccc;
+          padding: 0.5rem 1rem;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        .filter-option:hover {
+          background: #e0e0e0;
+        }
+        .filter-option.active {
+          background: #007bff;
+          color: white;
+          border-color: #007bff;
+        }
+        .filter-option.active:hover {
+          background: #0056b3;
+          border-color: #0056b3;
+        }
+      `}</style>
     </div>
   );
 }
-
-export default YearFilter;

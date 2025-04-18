@@ -1,20 +1,17 @@
 'use client';
 
 import { readClient } from "@/lib/sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
-import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { PortableText } from "next-sanity";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Comments from "@/components/Comments";
 import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import Replies from "@/components/Replies";
 import './../../../styles.css';
-import { useParams } from 'next/navigation'; // Import useParams
 
 interface Author {
   _id: string;
   name: string;
-  email?: string;
 }
 
 interface BiblePassage {
@@ -25,24 +22,15 @@ interface BiblePassage {
   text?: string;
 }
 
-interface Reply {
-  _id: string;
-  content: string;
-  authorName: string;
-  authorEmail: string;
-  createdAt: string;
-}
-
 interface Discussion {
   _id: string;
   title: string;
-  content: any; // Changed from string to any for compatibility with PortableText
+  content: any;
   biblePassage: BiblePassage;
   author: Author;
   isFeatured: boolean;
   createdAt: string;
   updatedAt?: string;
-  replies?: Reply[];
 }
 
 const DISCUSSION_QUERY = `*[
@@ -59,54 +47,29 @@ const DISCUSSION_QUERY = `*[
     verseEnd,
     text
   },
-  author->{ _id, name, email },
+  author->{ _id, name },
   isFeatured,
   createdAt,
-  updatedAt,
-  replies[]{
-    _id,
-    content,
-    authorName,
-    authorEmail,
-    createdAt
-  }
+  updatedAt
 }`;
 
-const { projectId, dataset } = readClient.config();
-const urlForSanity = (source: SanityImageSource) =>
-  projectId && dataset
-    ? imageUrlBuilder({ projectId, dataset }).image(source)
-    : null;
-console.log("url", urlForSanity)
-
-interface CommentQueryResult {
-  _id: string;
-  comment: string;
-  _createdAt: string;
-  user: {
-    _id: string;
-    name: string;
-  };
-}
-
-export default function DiscussionPage() { // Removed Props here
+export default function DiscussionPage() {
   const { id } = useParams();
-const postId = id?.toString() || "";
-
+  const discussionId = id?.toString() || "";
   const [discussion, setDiscussion] = useState<Discussion | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDiscussion = async () => {
       try {
-        const data = await readClient.fetch<Discussion>(DISCUSSION_QUERY, { id });
+        const data = await readClient.fetch<Discussion>(DISCUSSION_QUERY, { id: discussionId });
         if (data) {
           setDiscussion(data);
         } else {
           notFound();
         }
-      } catch (err: unknown) {
+      } catch (err) {
         console.error("Error fetching discussion:", err);
         setError("Failed to load discussion.");
       } finally {
@@ -114,20 +77,12 @@ const postId = id?.toString() || "";
       }
     };
 
-    fetchData();
-  }, [id]);
+    fetchDiscussion();
+  }, [discussionId]);
 
-  if (loading) {
-    return <p>Loading discussion...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  if (!discussion) {
-    return null;
-  }
+  if (loading) return <div className="loading">Loading discussion...</div>;
+  if (error) return <div className="error">Error: {error}</div>;
+  if (!discussion) return null;
 
   const {
     title,
@@ -136,8 +91,7 @@ const postId = id?.toString() || "";
     author,
     isFeatured,
     createdAt,
-    updatedAt,
-    replies
+    updatedAt
   } = discussion;
 
   const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
@@ -146,34 +100,15 @@ const postId = id?.toString() || "";
     day: 'numeric'
   });
 
-  const updatedDate = updatedAt ? new Date(updatedAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }) : null;
-
   const passageText = biblePassage.verseEnd
     ? `${biblePassage.book} ${biblePassage.chapter}:${biblePassage.verseStart}-${biblePassage.verseEnd}`
     : `${biblePassage.book} ${biblePassage.chapter}:${biblePassage.verseStart}`;
-
-  const adaptedComments: CommentQueryResult[] = replies ? replies.map(reply => ({
-    _id: reply._id,
-    comment: reply.content,
-    _createdAt: reply.createdAt,
-    user: {
-      _id: reply.authorEmail || 'anonymous',
-      name: reply.authorName || 'Anonymous',
-    },
-  })) : [];
 
   return (
     <div className="discussion-page">
       <main className="discussion-container">
         <div className="back-link-container">
-          <Link
-            href="/community/discussions"
-            className="back-link"
-          >
+          <Link href="/community/discussions" className="back-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="back-arrow-icon"
@@ -201,31 +136,127 @@ const postId = id?.toString() || "";
             <h1 className="discussion-title">{title}</h1>
 
             <div className="discussion-meta">
-              <div className="meta-item">{author?.name || "Anonymous"}</div>
-              <div className="meta-item">{formattedDate}</div>
-              {updatedDate && <div className="meta-item">Updated {updatedDate}</div>}
-              <div className="meta-item">{passageText}</div>
+              <div className="meta-item author">{author?.name || "Anonymous"}</div>
+              <div className="meta-item date">{formattedDate}</div>
+              {updatedAt && (
+                <div className="meta-item updated">
+                  Updated {new Date(updatedAt).toLocaleDateString()}
+                </div>
+              )}
+              <div className="meta-item passage">{passageText}</div>
             </div>
           </header>
 
-          {discussion.biblePassage.text && (
+          {biblePassage.text && (
             <section className="bible-passage">
-              <h2 className="bible-passage-title">{passageText}</h2>
-              <p className="bible-passage-text">{discussion.biblePassage.text}</p>
+              <h2 className="passage-reference">{passageText}</h2>
+              <p className="passage-text">{biblePassage.text}</p>
             </section>
           )}
 
           <div className="discussion-content">
-            <PortableText value={Array.isArray(content) ? content : [{ _type: "block", children: [{ text: content }] }]} />
+            <PortableText value={content} />
           </div>
         </article>
 
-        <section className="replies-section">
-          <div className="replies-container">
-            <Comments postId={postId} initialComments={adaptedComments} />
-          </div>
-        </section>
+        <Replies 
+          discussionId={discussionId} 
+          discussionAuthorId={author._id} 
+        />
       </main>
+
+      <style jsx>{`
+        .discussion-page {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 2rem 1rem;
+        }
+        .back-link-container {
+          margin-bottom: 2rem;
+        }
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          color: #3b82f6;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .back-arrow-icon {
+          width: 1.25rem;
+          height: 1.25rem;
+          margin-right: 0.5rem;
+        }
+        .discussion-article {
+          margin-bottom: 3rem;
+        }
+        .discussion-header {
+          margin-bottom: 2rem;
+        }
+        .featured-badge {
+          display: inline-block;
+          background: #f59e0b;
+          color: white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 9999px;
+          font-size: 0.875rem;
+          font-weight: 500;
+          margin-bottom: 1rem;
+        }
+        .discussion-title {
+          font-size: 2rem;
+          font-weight: 700;
+          margin: 0 0 1rem 0;
+          color: #1f2937;
+        }
+        .discussion-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          color: #6b7280;
+          font-size: 0.875rem;
+        }
+        .meta-item {
+          display: flex;
+          align-items: center;
+        }
+        .meta-item.author {
+          font-weight: 500;
+          color: #1f2937;
+        }
+        .bible-passage {
+          background: #f8fafc;
+          padding: 1.5rem;
+          border-radius: 0.5rem;
+          margin: 2rem 0;
+        }
+        .passage-reference {
+          font-size: 1.25rem;
+          margin: 0 0 1rem 0;
+          color: #1e40af;
+        }
+        .passage-text {
+          margin: 0;
+          line-height: 1.6;
+          color: #374151;
+        }
+        .discussion-content {
+          line-height: 1.8;
+          color: #374151;
+        }
+        .discussion-content :global(p) {
+          margin: 1.5rem 0;
+        }
+        .loading {
+          text-align: center;
+          padding: 2rem;
+          color: #6b7280;
+        }
+        .error {
+          text-align: center;
+          padding: 2rem;
+          color: #dc2626;
+        }
+      `}</style>
     </div>
   );
 }

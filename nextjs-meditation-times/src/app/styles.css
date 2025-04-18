@@ -1654,3 +1654,282 @@ font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: var(--text-p
 .replies-container {
   padding-top: 1rem;
 }
+
+
+/* Original Styling */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-header {
+  margin-bottom: 3rem;
+}
+
+.year-message-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.year-heading {
+  font-size: 2.5rem;
+  color: #2c3e50;
+}
+
+.section-divider {
+  border: 0;
+  height: 1px;
+  background: #ddd;
+  margin: 2rem auto;
+  width: 80%;
+}
+
+.year-theme-heading {
+  font-size: 1.8rem;
+  color: #3498db;
+}
+
+.latest-meditation-container {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.posts-timeline {
+  display: grid;
+  gap: 2rem;
+}
+
+.post-card {
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Add all other original CSS classes here */
+
+/* Global Styles */
+.audio-button-container {
+  margin-top: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.audio-file-name strong {
+  color: #333;
+}
+
+.audio-play-button {
+  background: #28a745;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.audio-play-button:hover:not(:disabled) {
+  background: #218838;
+}
+
+.audio-play-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+.audio-error-message {
+  margin-top: 0.5rem;
+  color: red;
+  font-size: 0.9rem;
+}
+
+/* Floating Controls Styles */
+.floating-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.floating-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  width: 320px;
+  animation: fade-in-up 0.3s ease-out;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.track-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.close-button {
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.close-button:hover {
+  color: #374151;
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.play-button {
+  padding: 8px;
+  border-radius: 9999px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.play-button:hover {
+  background: #1d4ed8;
+}
+
+.progress-container {
+  flex: 1;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #2563eb;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.progress-bar::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #2563eb;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.time-display {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.toggle-button {
+  padding: 16px;
+  background: #2563eb;
+  color: white;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-button:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+
+
+/* Fix floating controls positioning */
+.floating-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000; /* Increased z-index */
+}
+
+/* Ensure footer stays behind */
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Prevent main content overflow */
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 120px; /* Add space for controls */
+}
+
+/* Optional: if using fixed footer */
+body {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Fix floating controls positioning */
+.floating-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000; /* Increased z-index */
+}
+
+/* Ensure footer stays behind */
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Prevent main content overflow */
+.main-content {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 120px; /* Add space for controls */
+}
+
+/* Optional: if using fixed footer */
+body {
+  position: relative;
+  min-height: 100vh;
+}

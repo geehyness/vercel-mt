@@ -1,11 +1,11 @@
 import { readClient } from '@/lib/sanity/client'
 import Link from 'next/link'
 import { groq } from 'next-sanity'
-import './style.css'
+import styles from './style.module.css'
 
 interface Discussion {
   _id: string
-  title: string // Changed from question to title
+  title: string
   biblePassage?: {
     book: string;
     chapter: number;
@@ -25,7 +25,7 @@ export default async function DiscussionsPage() {
     discussions = await readClient.fetch<Discussion[]>(groq`
       *[_type == "discussion"] | order(_createdAt desc) {
         _id,
-        title, // Changed from question to title
+        title,
         biblePassage{
           book,
           chapter,
@@ -39,19 +39,19 @@ export default async function DiscussionsPage() {
   } catch (error) {
     console.error('Error fetching discussions:', error)
     return (
-      <div className="max-w-4xl mx-auto py-8 px-4 text-red-500">
+      <div className={styles.error}>
         Error loading discussions. Please try again later.
       </div>
     )
   }
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-orange-500">Bible Discussions</h1>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Bible Discussions</h1>
         <Link
           href="/community/discussions/new"
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
+          className={styles.newDiscussionBtn}
           prefetch={false}
         >
           Start New Discussion
@@ -59,28 +59,30 @@ export default async function DiscussionsPage() {
       </div>
 
       {discussions.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 mb-4">No discussions yet</p>
+        <div className={styles.emptyState}>
+          <p className={styles.emptyMessage}>No discussions yet</p>
           <Link
             href="/community/discussions/new"
-            className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+            className={styles.newDiscussionBtn}
             prefetch={false}
           >
             Create First Discussion
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className={styles.discussionList}>
           {discussions.map((discussion) => (
             <Link
               key={discussion._id}
               href={`/community/discussions/${discussion._id}`}
-              className="block p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              className={styles.discussionCard}
               prefetch={false}
             >
-              <h2 className="text-xl font-semibold">{discussion.title}</h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                {discussion.biblePassage ? `${discussion.biblePassage.book} ${discussion.biblePassage.chapter}:${discussion.biblePassage.verseStart}${discussion.biblePassage.verseEnd ? `-${discussion.biblePassage.verseEnd}` : ''}` : 'No passage referenced'} •
+              <h2 className={styles.discussionTitle}>{discussion.title}</h2>
+              <p className={styles.discussionMeta}>
+                {discussion.biblePassage ? 
+                  `${discussion.biblePassage.book} ${discussion.biblePassage.chapter}:${discussion.biblePassage.verseStart}${discussion.biblePassage.verseEnd ? `-${discussion.biblePassage.verseEnd}` : ''}` : 
+                  'No passage referenced'} •
                 {(discussion.replyCount || 0)} replies •
                 Started by {discussion.author?.name || 'Anonymous'}
               </p>

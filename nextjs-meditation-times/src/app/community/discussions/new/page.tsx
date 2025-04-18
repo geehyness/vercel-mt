@@ -1,19 +1,11 @@
-// src/app/community/discussions/new/page.tsx
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import useBible from '@/hooks/useBible';
-import { writeClient } from '@/lib/sanity.client';
-
-/*interface BiblePassage {
-  book: string;
-  chapter: number;
-  verseStart: number;
-  verseEnd?: number;
-  text?: string;
-}*/
+import { writeClient } from '@/lib/sanity/client';
+import styles from './style.module.css';
 
 export default function NewDiscussionPage() {
   const router = useRouter();
@@ -55,10 +47,9 @@ export default function NewDiscussionPage() {
     }
 
     const verseText = getVerseText(selectedBook, selectedChapter.toString(), selectedVerseStart.toString());
-const endVerseText = selectedVerseEnd
-  ? getVerseText(selectedBook, selectedChapter.toString(), selectedVerseEnd.toString())
-  : null;
-
+    const endVerseText = selectedVerseEnd
+      ? getVerseText(selectedBook, selectedChapter.toString(), selectedVerseEnd.toString())
+      : null;
 
     setFormData({
       ...formData,
@@ -79,26 +70,40 @@ const endVerseText = selectedVerseEnd
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
-
+  
+    // 1. Validate user exists and has required fields
     if (!appUser) {
       setError('You must be logged in to create a discussion');
       setIsSubmitting(false);
       return;
     }
-
-    if (!formData.title) {
-      setError('Discussion title is required');
+  
+    if (!appUser._id || !appUser.name || !appUser.email) {
+      setError('Your user profile is incomplete. Please update your profile.');
       setIsSubmitting(false);
       return;
     }
-
-    if (!formData.biblePassage.book) {
-      setError('Please select a Bible passage');
-      setIsSubmitting(false);
-      return;
-    }
-
+  
+    // 2. Verify the user exists in Sanity
     try {
+      const userExists = await writeClient.fetch(
+        `defined(*[_type == "user" && _id == $userId][0]._id)`,
+        { userId: appUser._id }
+      );
+  
+      if (!userExists) {
+        // Create the user document if it doesn't exist
+        await writeClient.create({
+          _type: 'user',
+          _id: appUser._id,
+          name: appUser.name,
+          email: appUser.email,
+          // Add other required fields from your user schema
+          role: 'member' // default role
+        });
+      }
+  
+      // 3. Create the discussion with proper author reference
       const result = await writeClient.create({
         _type: 'discussion',
         title: formData.title,
@@ -110,39 +115,48 @@ const endVerseText = selectedVerseEnd
           verseEnd: formData.biblePassage.verseEnd,
           text: formData.biblePassage.text
         },
-        authorRef: appUser._id,
+        author: {
+          _type: 'reference',
+          _ref: appUser._id
+        },
+        // Add authorName and authorEmail for easy querying
         authorName: appUser.name,
         authorEmail: appUser.email,
-        createdAt: new Date().toISOString(),
-        isFeatured: false
+        isFeatured: false,
+        createdAt: new Date().toISOString()
       });
-
+  
       router.push(`/community/discussions/${result._id}`);
     } catch (err: unknown) {
       console.error('Error creating discussion:', err);
-      setError('Failed to create discussion');
+      setError(
+        err instanceof Error 
+          ? err.message 
+          : 'Failed to create discussion. Please try again.'
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
-//<TokenDebug/>
-  return (
-    <div className="max-w-2xl mx-auto p-4">
 
-      <h1 className="text-2xl font-bold mb-6">New Discussion</h1>
+  return (
+    <div className={styles.container}>
+      <h1 className={styles.header}>New Discussion</h1>
 
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div className={styles.error}>
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className={styles.form}>
         {/* Bible Reference Selector */}
-        <div className="space-y-2">
-          <label className="block mb-2 font-medium">Bible Reference*</label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            <span className={styles.requiredField}>Bible Reference</span>
+          </label>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className={styles.bibleSelector}>
             <select
               value={selectedBook}
               onChange={(e) => {
@@ -151,7 +165,7 @@ const endVerseText = selectedVerseEnd
                 setSelectedVerseStart(null);
                 setSelectedVerseEnd(null);
               }}
-              className="p-2 border rounded"
+              className={styles.input}
               disabled={bibleLoading}
             >
               <option value="">Select Book</option>
@@ -167,7 +181,7 @@ const endVerseText = selectedVerseEnd
                 setSelectedVerseStart(null);
                 setSelectedVerseEnd(null);
               }}
-              className="p-2 border rounded"
+              className={styles.input}
               disabled={!selectedBook}
             >
               <option value="">Chapter</option>
@@ -182,7 +196,7 @@ const endVerseText = selectedVerseEnd
                 setSelectedVerseStart(Number(e.target.value));
                 setSelectedVerseEnd(null);
               }}
-              className="p-2 border rounded"
+              className={styles.input}
               disabled={!selectedChapter}
             >
               <option value="">Verse Start</option>
@@ -194,7 +208,7 @@ const endVerseText = selectedVerseEnd
             <select
               value={selectedVerseEnd || ''}
               onChange={(e) => setSelectedVerseEnd(Number(e.target.value))}
-              className="p-2 border rounded"
+              className={styles.input}
               disabled={!selectedVerseStart}
             >
               <option value="">Verse End (optional)</option>
@@ -210,50 +224,55 @@ const endVerseText = selectedVerseEnd
             type="button"
             onClick={handlePassageSelect}
             disabled={!selectedVerseStart}
-            className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
+            className={`${styles.button} ${styles.buttonSecondary}`}
           >
             Confirm Passage
           </button>
 
           {formData.biblePassage.text && (
-            <div className="p-3 mt-2 bg-gray-50 border rounded">
-              <p className="font-semibold">Selected Passage:</p>
-              <p>{formData.biblePassage.text}</p>
+            <div className={styles.selectedPassage}>
+              <p className={styles.passageTitle}>Selected Passage:</p>
+              <p className={styles.passageText}>{formData.biblePassage.text}</p>
             </div>
           )}
         </div>
 
         {/* Discussion Title */}
-        <div>
-          <label className="block mb-2 font-medium">Discussion Title*</label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>
+            <span className={styles.requiredField}>Discussion Title</span>
+          </label>
           <input
             type="text"
             value={formData.title}
             onChange={(e) => setFormData({...formData, title: e.target.value})}
-            className="w-full p-2 border rounded"
+            className={styles.input}
             required
           />
         </div>
 
         {/* Discussion Content */}
-        <div>
-          <label className="block mb-2 font-medium">Details</label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Details (Optional)</label>
           <textarea
             value={formData.content}
             onChange={(e) => setFormData({...formData, content: e.target.value})}
-            className="w-full p-2 border rounded"
-            rows={4}
+            className={`${styles.input} ${styles.textarea}`}
+            rows={6}
+            placeholder="Add any additional context or questions about this passage..."
           />
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isSubmitting || !formData.biblePassage.book}
-          className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400"
-        >
-          {isSubmitting ? 'Creating...' : 'Create Discussion'}
-        </button>
+        <div className={styles.formGroup}>
+          <button
+            type="submit"
+            disabled={isSubmitting || !formData.biblePassage.book || !formData.title}
+            className={`${styles.button} ${styles.buttonPrimary}`}
+          >
+            {isSubmitting ? 'Creating Discussion...' : 'Create Discussion'}
+          </button>
+        </div>
       </form>
     </div>
   );

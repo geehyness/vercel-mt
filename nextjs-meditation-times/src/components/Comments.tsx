@@ -1,16 +1,18 @@
+// components/Comments.tsx
 'use client';
 import { useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import type { CommentQueryResult } from '@/app/[slug]/page';
+import type { CommentQueryResult } from '@/app/post/[yearWeek]/page'; // Import the type from the page
 import Link from 'next/link';
 
 interface CommentsProps {
   postId: string;
-  initialComments: CommentQueryResult[];
+  initialComments: CommentQueryResult[]; // Comments are received as a prop
 }
 
 export default function Comments({ postId, initialComments }: CommentsProps) {
   const { user, isAuthenticated } = useAuth();
+  // Initialize comments state with the comments passed from the server/page
   const [comments, setComments] = useState<CommentQueryResult[]>(initialComments);
   const [commentText, setCommentText] = useState('');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -23,14 +25,22 @@ export default function Comments({ postId, initialComments }: CommentsProps) {
 
     try {
       if (!isAuthenticated || !user?._id) {
-        throw new Error('You must be logged in to comment');
+        setStatusMessage('Error: You must be logged in to comment');
+        setIsSubmitting(false);
+        return; // Stop execution
+      }
+
+       if (!commentText.trim()) {
+          setStatusMessage('Error: Comment cannot be empty.');
+          setIsSubmitting(false);
+          return;
       }
 
       const response = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          postId,
+          postId, // postId received from props
           comment: commentText,
           userId: user._id
         }),
@@ -39,22 +49,30 @@ export default function Comments({ postId, initialComments }: CommentsProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit comment');
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
 
-      // Optimistically update with new comment
+      // --- Optimistic Update ---
+      // Add the new comment to the state immediately.
+      // Note: The API/Sanity saves the comment with approved: false by default.
+      // This optimistic update shows the user their comment instantly,
+      // but it will disappear for other users (and on page refresh)
+      // until it is manually approved in the Sanity Studio.
       setComments(prev => [...prev, {
-        ...data.comment,
+        // Use data returned from the API if available (_id, _createdAt)
         _id: data.comment._id,
-        _createdAt: new Date().toISOString(),
-        user: { _id: user._id, name: user.name }
+        _createdAt: data.comment._createdAt || new Date().toISOString(), // Fallback timestamp
+        comment: commentText, // Use the text the user typed
+        user: { _id: user._id, name: user.name || 'You' }, // Use logged-in user info
+        approved: data.comment.approved ?? true // Optimistically assume true for immediate display
       }]);
-      
-      setStatusMessage('Comment submitted successfully!');
+
+      setStatusMessage('Comment submitted successfully!'); // Inform the user
       setCommentText('');
 
-    } catch (error: Error) {
-      setStatusMessage(`Error: ${error.message}`);
+    } catch (error: any) {
+      console.error('Comment submission failed:', error);
+      setStatusMessage(`Error: ${error.message || 'Failed to submit comment'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -63,25 +81,27 @@ export default function Comments({ postId, initialComments }: CommentsProps) {
   return (
     <section className="comments-section" aria-labelledby="comments-heading">
       <hr className="comments-divider" />
+      {/* Display the number of comments received from the server (approved ones) */}
       <h2 id="comments-heading" className="comments-title">
         Comments ({comments.length})
       </h2>
 
+      {/* Display initial comments received from the server */}
       {comments.length > 0 ? (
         <ul className="comments-list">
           {comments.map((comment) => (
+            // Note: These comments are already filtered by 'approved == true' in the fetch query on the page
             <li key={comment._id} className="comment-item">
               <p className="comment-meta">
                 <strong className="comment-author">
                   {comment.user?.name || 'Anonymous'}
                 </strong>
                 <time dateTime={comment._createdAt} className="comment-date">
-                  {new Date(comment._createdAt).toLocaleString('en-US', {
+                  {/* Format the date */}
+                  {new Date(comment._createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
                   })}
                 </time>
               </p>
@@ -90,6 +110,7 @@ export default function Comments({ postId, initialComments }: CommentsProps) {
           ))}
         </ul>
       ) : (
+         // Message shown if no *approved* comments are found
         <p>Be the first to comment!</p>
       )}
 
@@ -125,7 +146,7 @@ export default function Comments({ postId, initialComments }: CommentsProps) {
         ) : (
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !commentText.trim()} // Disable if submitting or text is empty
             className="submit-button"
           >
             {isSubmitting ? 'Submitting...' : 'Submit Comment'}
@@ -134,7 +155,7 @@ export default function Comments({ postId, initialComments }: CommentsProps) {
       </form>
 
       <style jsx>{`
-        /* Maintain all previous styles from earlier version */
+        /* Maintain all previous styles */
         .comments-section { margin-top: 2rem; padding-top: 1.5rem; }
         .comments-divider { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
         .comments-title, .form-title { font-size: 1.5rem; margin-bottom: 1rem; color: #333; }

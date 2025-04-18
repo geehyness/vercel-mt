@@ -1,0 +1,219 @@
+/* FloatingAudioControls.module.css */
+/*
+  This file contains styles specific to the FloatingAudioControls component,
+  using pure CSS and CSS Modules.
+  It relies on global CSS variables defined elsewhere (e.g., in app/globals.css).
+*/
+
+/* Outer container - handles positioning and layout of the card and button (if button were present) */
+.audio-controls-container {
+  position: fixed;
+  bottom: var(--space-lg); /* Use CSS variable for position offset (1.5rem like Tailwind bottom-6) */
+  right: var(--space-lg);  /* Use CSS variable for position offset (1.5rem like Tailwind right-6) */
+  z-index: 50; /* Equivalent to z-50 */
+
+  /* Layout for direct children (the card and the toggle button if it were here) */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align items to the right */
+  gap: var(--space-md); /* Gap between the card and the toggle button area */
+
+  /* Ensure it's block level if needed, though flex/fixed usually handle this */
+  /* display: block; */
+}
+
+
+/* The main player card */
+.audio-controls-card {
+  background-color: #121212;
+  border-radius: var(--radius-md); /* Equivalent to rounded-lg */
+  box-shadow: var(--shadow-md); /* Equivalent to shadow-xl, mapped to shadow-md based on theme */
+  padding: var(--space-md); /* Equivalent to p-4 */
+  width: 320px; /* Equivalent to w-80 */
+
+  /* Layout for direct children inside the card (header, body) */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md); /* Equivalent to space-y-4 */
+
+  /* Animation */
+  animation: fade-in-up 0.3s ease-out forwards; /* Equivalent to animate-fade-in-up */
+}
+
+/* Card Header - contains title and close button */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm); /* Small gap between title/link and close button */
+}
+
+/* Card Header Title (h3 wrapping the link) */
+.card-header h3 {
+    flex-grow: 1; /* Allows title to take available space */
+    margin: 0; /* Reset default h3 margin */
+    padding: 0; /* Reset default h3 padding */
+    /* font-weight: 500; /* Equivalent to font-medium, applied to link below */
+    /* Overflow handled by link class */
+}
+
+
+/* Style for the track title link */
+.track-title-link {
+  color: white; /* Default text color on light background */
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-weight: 500; /* Equivalent to font-medium */
+  display: block; /* Make link block level */
+  overflow: hidden; /* Ensure truncate works */
+  text-overflow: ellipsis; /* Equivalent to truncate */
+  white-space: nowrap; /* Equivalent to truncate */
+}
+.track-title-link:hover {
+  color: var(--secondary); /* Blue hover */
+  text-decoration: underline;
+}
+
+/* Style for the close button */
+.close-button {
+  color: white; /* Equivalent to text-gray-500 */
+  transition: color 0.2s ease; /* Equivalent to transition-colors */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* Remove default button padding */
+  font-size: 2rem; /* Adjust size if needed */
+  line-height: 1; /* Prevent extra space below the 'x' */
+  flex-shrink: 0; /* Prevent shrinking when title is long */
+}
+.close-button:hover {
+  color: var(--text); /* Equivalent to hover:text-gray-700 */
+}
+
+/* Card Body - contains playback controls and time */
+.card-body {
+    /* Layout for direct children (the playback controls row) */
+    display: flex;
+    flex-direction: column; /* Stack elements vertically if needed, or just wrap controls */
+    gap: var(--space-xs); /* Equivalent to space-y-2 */
+}
+
+/* Playback Controls Row - contains play/pause button, progress, and time */
+.playback-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md); /* Equivalent to gap-4 */
+}
+
+
+/* Style for the play/pause button */
+.play-pause-button {
+  padding: var(--space-xs); /* Equivalent to p-2 */
+  border-radius: 9999px; /* Equivalent to rounded-full */
+  background-color: var(--secondary); /* Equivalent to bg-blue-600 */
+  color: #121212; /* Equivalent to text-white */
+  transition: background-color 0.2s ease; /* Equivalent to transition-colors */
+  border: none; /* Remove default button border */
+  cursor: pointer;
+  display: flex; /* For centering SVG */
+  align-items: center; /* For centering SVG */
+  justify-content: center; /* For centering SVG */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+.play-pause-button:hover {
+  background-color: var(--accent); /* Equivalent to hover:bg-blue-700 */
+}
+
+/* Container for the progress bar and time - takes remaining space */
+.progress-container {
+    flex: 1; /* Equivalent to flex-1 */
+    /* The gap between button and progress bar is handled by the parent flex container */
+}
+
+/* Style for the progress bar input range */
+.progress-range {
+  width: 100%; /* Equivalent to w-full */
+  height: var(--space-xs); /* Equivalent to h-2, adjust if needed */
+  background: var(--border-light); /* Equivalent to bg-gray-200 */
+  border-radius: var(--radius-md); /* Equivalent to rounded-lg */
+  appearance: none; /* Equivalent to appearance-none */
+  cursor: pointer; /* Equivalent to cursor-pointer */
+  outline: none; /* Remove default focus outline */
+  margin: var(--space-xs) 0; /* Add slight margin top/bottom to visually center with thumb */
+  padding: 0; /* Ensure no padding affects height */
+
+  /* Override browser default styles */
+  /* Track */
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: var(--space-xs);
+    background: #2e2e2e;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+  &::-moz-range-track {
+    width: 100%;
+    height: var(--space-xs);
+    background: #2e2e2e;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+
+  /* Thumb */
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: var(--space-md); /* Size of the thumb */
+    height: var(--space-md);
+    background: var(--primary); /* primary color for thumb */
+    border-radius: 9999px; /* rounded thumb */
+    cursor: pointer;
+    margin-top: calc((var(--space-xs) - var(--space-md)) / 2); /* Center thumb vertically */
+    box-shadow: var(--shadow-sm); /* Optional: small shadow on thumb */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+   &::-webkit-slider-thumb:hover {
+       background-color: var(--primary-dark); /* Darker primary for hover (defined in global CSS) */
+   }
+
+  &::-moz-range-thumb {
+    width: var(--space-md);
+    height: var(--space-md);
+    background: var(--primary);
+    border-radius: 9999px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm); /* Optional */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  &::-moz-range-thumb:hover {
+       background-color: var(--primary-dark); /* Darker primary for hover (defined in global CSS) */
+   }
+}
+
+/* Style for the time display */
+.time-display {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem; /* Equivalent to text-sm */
+  color: var(--text-light); /* Equivalent to text-gray-500 */
+}
+
+/* SVG Icon Size */
+.icon-size {
+  width: 24px; /* Equivalent to w-6 */
+  height: 24px; /* Equivalent to h-6 */
+  display: block; /* Ensures SVG takes up designated space */
+  /* Stroke color is handled by currentColor, inherited from button */
+}
+
+
+/* Animation Keyframes */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,147 @@
+/* Main container styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+}
+
+/* Header section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* Button/link styles */
+.newDiscussionBtn {
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.newDiscussionBtn:hover {
+  background-color: #0069d9;
+  transform: translateY(-1px);
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.emptyMessage {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+}
+
+/* Discussion list */
+.discussionList {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+/* Discussion card */
+.discussionCard {
+  display: block;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.discussionCard:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.discussionTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.discussionMeta {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+/* Error state */
+.error {
+  padding: 2rem;
+  text-align: center;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+  max-width: 800px;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .container {
+      background-color: #1a202c;
+      color: #f8f9fa;
+  }
+  
+  .header {
+      border-bottom-color: #4a5568;
+  }
+  
+  .title {
+      color: #f8f9fa;
+  }
+  
+  .newDiscussionBtn {
+      background-color: #4299e1;
+  }
+  
+  .newDiscussionBtn:hover {
+      background-color: #3182ce;
+  }
+  
+  .emptyMessage {
+      color: #a0aec0;
+  }
+  
+  .discussionCard {
+      background-color: #2d3748;
+      border-color: #4a5568;
+      color: #f8f9fa;
+  }
+  
+  .discussionTitle {
+      color: #f8f9fa;
+  }
+  
+  .discussionMeta {
+      color: #a0aec0;
+  }
+  
+  .error {
+      color: #fed7d7;
+      background-color: #742a2a;
+  }
+}
