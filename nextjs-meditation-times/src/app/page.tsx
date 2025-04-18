@@ -91,7 +91,7 @@ export default function PostsPage() {
   // Utility functions
   const formatYearWeekDisplay = (yearWeek: string): string => {
     if (!yearWeek || yearWeek.length < 7) return '';
-    const [year, week] = yearWeek.split('-W');
+    const [year, week] = yearWeek.split('-w');
     return `Year ${year}, Week ${week}`;
   };
 
