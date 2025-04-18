@@ -110,7 +110,6 @@ export default function PostsPage() {
       <div className="dashboard-header">
         <div className="year-message-container">
           <h2 className="year-heading">{currentYear}</h2>
-          <hr className="section-divider" />
           <h2 className="year-theme-heading">Year of Growth</h2>
           <p className="year-theme-text">
             2 Peter 3:18: &quot;But grow in the grace and knowledge of our Lord and Savior Jesus Christ...&quot;
@@ -176,7 +175,7 @@ export default function PostsPage() {
               <div className="post-week-indicator">
                 {formatYearWeekDisplay(post.yearWeek)}
               </div>
-
+<br />
               <div className="post-content-container">
                 {post.mainImage?.asset?.url && (
                   <div className="post-image-wrapper">
