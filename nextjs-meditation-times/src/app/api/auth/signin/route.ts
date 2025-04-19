@@ -1,7 +1,7 @@
 // src/app/api/auth/signin/route.ts
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { client } from '@/sanity/client'
+import { client } from '@/lib/sanity.client'
 import bcrypt from 'bcryptjs'
 
 export async function POST(request: Request) {
