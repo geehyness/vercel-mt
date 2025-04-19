@@ -154,9 +154,14 @@ export default function DiscussionPage() {
             </section>
           )}
 
-          <div className="discussion-content">
-            <PortableText value={content} />
-          </div>
+          
+{/* Display Discussion Content (assuming it's a string) */}
+      {/* Add a check to ensure content exists and is a string */}
+      {content && typeof content === 'string' && (
+        <section className="discussion-content"> {/* Use a class for styling the content section */}
+          <p className="discussion-paragraph">{content}</p> {/* Use a class for styling paragraphs */}
+        </section>
+      )}
         </article>
 
         <Replies 
